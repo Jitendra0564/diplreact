@@ -324,7 +324,7 @@ const TaskCard = () => {
                         border: '2px solid #000',
                         boxShadow: 24,
                         p: 4,
-                        maxHeight: '80vh', // Set maximum height for the modal content
+                        maxHeight: '50vh', // Set maximum height for the modal content
                         overflowY: 'auto', // Enable vertical scrolling
                     }}
                 >
