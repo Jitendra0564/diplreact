@@ -1,0 +1,30 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.header {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("./assets/meeting.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 80vh;
+}
+
+.grid_col_1 {
+  background: url("./assets/grid_image.jpg");
+}
+
+.scrollable-container {
+  max-height: 200px;
+  /* Specify the maximum height for the scrollable container */
+  overflow-y: auto;
+  /* Enable vertical scrolling */
+}
+
+/* Hide the scrollbar for WebKit-based browsers (Chrome, Safari) */
+.scrollable-container::-webkit-scrollbar {
+  display: none;
+  /* Hide the scrollbar */
+}
