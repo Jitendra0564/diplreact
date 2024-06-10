@@ -22,7 +22,9 @@ const AdminPannelGrid = () => {
     const [InProgressTasks, setInProgress] = useState([]);
     const [totalEmployees, setTotalEmployees] = useState([]);
     const [totalCompanies, setTotalCompanies] = useState([]);
-    const [visibleTaskList, setVisibleTaskList] = useState(null); // Track the currently visible task list
+    const [visibleTaskList, setVisibleTaskList] = useState(null);
+    const [completionRate, setCompletionRate] = useState(0);
+
 
     // Function to get the value of a cookie by name
     const getCookieValue = (name) => {
@@ -55,6 +57,7 @@ const AdminPannelGrid = () => {
                 setPendingTasks(allTasks.filter((task) => task.status === 'Pending'));
                 setExpiredTasks(allTasks.filter((task) => task.status === 'Cancelled'));
                 setInProgress(allTasks.filter((task) => task.status === 'In Progress'));
+                setCompletionRate((completedTasks.length/ allTasks.length) * 100);
                 const allemployees = employeesResponse.data
                 setTotalEmployees(allemployees);
                 const allcompanies = companiesResponse.data
@@ -329,38 +332,36 @@ const AdminPannelGrid = () => {
                         </ul>
                         <ul className="hidden space-y-8 lg:block">
                             <li className="text-sm leading-6">
-                                <div class="relative group">
+                                <div className="relative group">
                                     <a href="#" class="cursor-pointer">
                                         <div
                                             className="relative p-6 space-y-6 leading-none rounded-lg shadow-lg bg-white hover:bg-gray-100 ring-1 ring-gray-900/5">
                                             <div className="flex items-center space-x-4"><img
                                                 src={rtcomplition}
-                                                clasName="w-15 h-12 bg-center bg-cover " alt="Score" />
+                                                className="w-15 h-12 bg-center bg-cover" alt="Score" />
                                                 <div>
-                                                    <h3 className="text-lg font-semibold text-black">Rate Of Task complition</h3>
-                                                    <p className="text-gray-500 text-md">Complition Rate</p>
+                                                    <h3 className="text-lg font-semibold text-black">Rate Of Task Completion</h3>
+                                                    <p className="text-gray-500 text-md">Completion Rate</p>
                                                 </div>
                                             </div>
-
-
-                                            <h1 className=" text-gray-900 font-bold text-8xl text-center ">95<span className="text-sm font-bold">%</span></h1>
-
+                                            <h1 className=" text-gray-900 font-bold text-8xl text-center ">{Math.round(completionRate)}<span className="text-sm font-bold">%</span></h1>
                                         </div>
                                     </a>
                                 </div>
+
                             </li>
                             <li className="text-sm leading-6">
                                 <div className="relative group">
                                     <a href="#" class="cursor-pointer">
                                         <div
                                             className="relative p-6 space-y-6 leading-none rounded-lg shadow-lg bg-white  hover:bg-gray-100 ring-1 ring-gray-900/5">
-                                            <div className="flex items-center justify-between space-x-4">
+                                            <div className="flex items-center justify-between space-x-9">
                                                 <div className='flex items-center'>
                                                     <img
                                                         src={completedtask}
-                                                        class="w-12 h-10 bg-center bg-cover " alt="Tasks" />
+                                                        class="w-12 h-10 bg-center bg-cover" alt="Tasks" />
                                                     <div className='p-3'>
-                                                        <h3 className="text-lg font-semibold text-black">Total completed Tasks</h3>
+                                                        <h3 className="text-lg font-semibold text-black">Total Completed Tasks</h3>
                                                         <p className="text-gray-500 text-md"> Employee</p>
                                                     </div>
                                                 </div>

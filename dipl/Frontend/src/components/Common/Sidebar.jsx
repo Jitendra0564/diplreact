@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom';
 import { RiToolsFill, RiOrganizationChart, RiDashboardLine } from "react-icons/ri";
 import { LuUsers2, LuListTodo } from "react-icons/lu";
 import { PiListChecks } from "react-icons/pi";
-import { CiLogout } from "react-icons/ci";
 import ProfileMenue from './ProfileMenue';
 import Tooltip from '@mui/material/Tooltip';
 import { useAuth } from '../../pages/AuthContext'; // Import the context
@@ -58,14 +57,14 @@ const getCookieValue = (name) => {
       <div className="flex flex-col">
         <ProfileMenue />
 
-         {/* Logout Button */}
+         {/* Logout Button
          
          <button
           onClick={logout}
           className="mt-4 p-1.5 text-gray-700 transition-colors duration-200 rounded-lg hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800">
             <CiLogout />
           Logout
-        </button>
+        </button> */}
       </div>
     </aside>
   );
