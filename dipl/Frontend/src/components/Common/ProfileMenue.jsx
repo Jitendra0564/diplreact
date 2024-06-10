@@ -243,7 +243,7 @@ export default function AccountMenu() {
 
     const handleLogout = () => {
         logout(); // Call the logout function from useAuth
-        navigate('/Login'); // Redirect to the login page
+        navigate('/login'); // Redirect to the login page
     };
 
     return (

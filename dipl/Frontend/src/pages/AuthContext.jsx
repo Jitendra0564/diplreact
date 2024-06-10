@@ -18,7 +18,6 @@ export const AuthProvider = ({ children }) => {
 
 
   const login = (userData) => {
-    console.log('userData:', userData);
     setAuth({
       isAuthenticated: true,
       isAdmin: userData.isAdmin,

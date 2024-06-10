@@ -10,14 +10,14 @@ import { useAuth } from '../../pages/AuthContext'; // Import the context
 
 // Function to get the value of a cookie by name
 const getCookieValue = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-  };
-  
-  const Sidebar = () => {
-    const { auth, logout } = useAuth();
-    const isAdmin = getCookieValue('isAdmin') === 'true'; // Get auth information from context
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+};
+
+const Sidebar = () => {
+  const { auth, logout } = useAuth();
+  const isAdmin = getCookieValue('isAdmin') === 'true'; // Get auth information from context
 
   return (
     <aside className="flex flex-col items-center w-16 h-screen py-8 overflow-y-auto bg-white border-r rtl:border-l rtl:border-r-0 dark:bg-gray-900 dark:border-gray-700">
@@ -27,9 +27,9 @@ const getCookieValue = (name) => {
         </a>
 
         {isAdmin && (
-        <NavLink to="/admin" className="p-1.5 text-gray-700 transition-colors duration-200 rounded-lg hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800">
-          <RiDashboardLine className='h-6 w-6' />
-        </NavLink>
+          <NavLink to="/admin" className="p-1.5 text-gray-700 transition-colors duration-200 rounded-lg hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800">
+            <RiDashboardLine className='h-6 w-6' />
+          </NavLink>
         )}
 
         {isAdmin && (
@@ -37,7 +37,11 @@ const getCookieValue = (name) => {
             <RiOrganizationChart className='h-6 w-6' />
           </NavLink>
         )}
-
+        {!isAdmin && (
+          <NavLink to="/User1" className="p-1.5 text-gray-700 transition-colors duration-200 rounded-lg hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800">
+            <RiDashboardLine className='h-6 w-6' />
+          </NavLink>
+        )}
         <NavLink to="/task" className="p-1.5 text-gray-700 transition-colors duration-200 rounded-lg hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800">
           <PiListChecks className='h-6 w-6' />
         </NavLink>
@@ -57,7 +61,7 @@ const getCookieValue = (name) => {
       <div className="flex flex-col">
         <ProfileMenue />
 
-         {/* Logout Button
+        {/* Logout Button
          
          <button
           onClick={logout}
