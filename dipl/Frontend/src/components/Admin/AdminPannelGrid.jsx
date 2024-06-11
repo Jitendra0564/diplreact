@@ -57,11 +57,13 @@ const AdminPannelGrid = () => {
                 setPendingTasks(allTasks.filter((task) => task.status === 'Pending'));
                 setExpiredTasks(allTasks.filter((task) => task.status === 'Cancelled'));
                 setInProgress(allTasks.filter((task) => task.status === 'In Progress'));
-                setCompletionRate((completedTasks.length/ allTasks.length) * 100);
+                setCompletionRate((completedTasks.length / allTasks.length) * 100);
                 const allemployees = employeesResponse.data
                 setTotalEmployees(allemployees);
                 const allcompanies = companiesResponse.data
                 setTotalCompanies(allcompanies);
+                
+
             } catch (error) {
                 console.error('Error fetching tasks:', error);
             }
@@ -274,6 +276,7 @@ const AdminPannelGrid = () => {
                                     </a>
                                 </div>
                             </li>
+                            {isAdmin && (
                             <li className="text-sm leading-6">
                                 <div className="relative group">
                                     <a href="#" class="cursor-pointer">
@@ -300,6 +303,7 @@ const AdminPannelGrid = () => {
                                     </a>
                                 </div>
                             </li>
+                            )}
                             <li className="text-sm leading-6">
                                 <div className="relative group">
                                     <a href="#" class="cursor-pointer">
@@ -377,30 +381,35 @@ const AdminPannelGrid = () => {
                                     </a>
                                 </div>
                             </li>
-                            <li className="text-sm leading-6">
-                                <div className="relative group">
-                                    <a href="#" class="cursor-pointer">
-                                        <div
-                                            className="relative p-6 space-y-6 leading-none rounded-lg shadow-lg bg-white hover:bg-gray-100 ring-1 ring-gray-900/5">
-                                            <div className="flex items-center space-x-4"><img
-                                                src={temployees}
-                                                clasName="w-15 h-12 bg-center bg-cover " alt="Score" />
-                                                <div>
-                                                    <h3 className="text-lg font-semibold text-black">Toltal Companies</h3>
-                                                    <p className="text-gray-500 text-md">Companies</p>
+
+                            {isAdmin && (
+                                <li className="text-sm leading-6">
+                                    <div className="relative group">
+                                        <a href="#" className="cursor-pointer">
+                                            <div
+                                                className="relative p-6 space-y-6 leading-none rounded-lg shadow-lg bg-white hover:bg-gray-100 ring-1 ring-gray-900/5">
+                                                <div className="flex items-center space-x-4">
+                                                    <img
+                                                        src={temployees}
+                                                        className="w-15 h-12 bg-center bg-cover" alt="Score" />
+                                                    <div>
+                                                        <h3 className="text-lg font-semibold text-black">Total Companies</h3>
+                                                        <p className="text-gray-500 text-md">Companies</p>
+                                                    </div>
                                                 </div>
+                                                <h1 className="text-gray-900 font-bold text-8xl text-center">{totalCompanies.length}<span className="text-sm font-bold">-Only</span></h1>
+                                                <Button
+                                                    className="w-full text-indigo-600 bg-indigo-100 hover:bg-indigo-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
+                                                    onClick={() => toggleTaskList('Companies')}
+                                                >
+                                                    View List
+                                                </Button>
                                             </div>
-                                            <h1 className=" text-gray-900 font-bold text-8xl text-center ">{totalCompanies.length}<span className="text-sm font-bold">-Only</span></h1>
-                                            <Button
-                                                className="w-full text-indigo-600 bg-indigo-100 hover:bg-indigo-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
-                                                onClick={() => toggleTaskList('Companies')}
-                                            >
-                                                View List
-                                            </Button>
-                                        </div>
-                                    </a>
-                                </div>
-                            </li>
+                                        </a>
+                                    </div>
+                                </li>
+                            )}
+
                         </ul>
                     </div>
                 </div>
@@ -414,7 +423,7 @@ const AdminPannelGrid = () => {
                 aria-describedby="task-list-modal-description"
             >
                 <Box
-                     sx={{
+                    sx={{
                         position: 'absolute',
                         top: '50%',
                         left: '50%',
@@ -429,21 +438,21 @@ const AdminPannelGrid = () => {
                     }}
                 >
                     <Typography id="task-list-modal-title" variant="h6" component="h2">
-                    {visibleTaskList === 'total'
+                        {visibleTaskList === 'total'
                             ? 'Total Tasks'
                             : visibleTaskList === 'Completed'
-                            ? 'Completed Tasks'
-                            : visibleTaskList === 'Pending'
-                            ? 'Pending Tasks'
-                            : visibleTaskList === 'Cancelled'
-                            ? 'Expired Tasks'
-                            : visibleTaskList === 'In Progress'
-                            ? 'In Progress Tasks'
-                            : visibleTaskList === 'Employees'
-                            ? 'Total Employees'
-                            : visibleTaskList === 'Companies'
-                            ? 'Total Companies'
-                            : ''}
+                                ? 'Completed Tasks'
+                                : visibleTaskList === 'Pending'
+                                    ? 'Pending Tasks'
+                                    : visibleTaskList === 'Cancelled'
+                                        ? 'Expired Tasks'
+                                        : visibleTaskList === 'In Progress'
+                                            ? 'In Progress Tasks'
+                                            : visibleTaskList === 'Employees'
+                                                ? 'Total Employees'
+                                                : visibleTaskList === 'Companies'
+                                                    ? 'Total Companies'
+                                                    : ''}
                     </Typography>
                     <div id="task-list-modal-description">
                         {visibleTaskList === 'total' && renderTaskTitles(totalTasks, [], [])}
