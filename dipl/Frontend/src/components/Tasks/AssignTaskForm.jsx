@@ -7,6 +7,7 @@ import axios from 'axios';
 const AssignTaskForm = ({ onBack }) => {
     const navigate = useNavigate();
     const [users, setUsers] = useState([]);
+    const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
     useEffect(() => {
         // Fetch employee data from the backend
@@ -43,11 +44,15 @@ const AssignTaskForm = ({ onBack }) => {
     const onSubmit = async (values, { resetForm, setSubmitting }) => {
         try {
             const response = await axios.post('http://localhost:5000/api/tasks/', values);
-            console.log('Task created successfully:', response.data);
+            //console.log('Task created successfully:', response.data);
             alert('Task assigned successfully!');
             resetForm();
-            navigate('/task'); // Navigate back to task table
-            onBack(); // Call onBack callback
+            setShowSuccessAlert(true);
+            setTimeout(() => {
+                setShowSuccessAlert(false);
+                navigate('/task'); // Navigate back to task table
+                onBack(); // Call onBack callback
+            }, 3000); // Hide the alert after 3 seconds
         } catch (error) {
             console.error('Error creating task:', error);
             alert('An error occurred while assigning the task.');
@@ -155,6 +160,11 @@ const AssignTaskForm = ({ onBack }) => {
                     </Form>
                 )}
             </Formik>
+            {showSuccessAlert && (
+                <div className="bg-green-500 text-white rounded-md p-2 mt-4">
+                    Task assigned successfully!
+                </div>
+            )}
         </div>
     );
 };

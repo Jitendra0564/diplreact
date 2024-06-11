@@ -54,6 +54,7 @@ const AdminPannelGrid = () => {
                 const allTasks = tasksResponse.data;
                 setTotalTasks(allTasks);
                 setCompletedTasks(allTasks.filter((task) => task.status === 'Completed'));
+                
                 setPendingTasks(allTasks.filter((task) => task.status === 'Pending'));
                 setExpiredTasks(allTasks.filter((task) => task.status === 'Cancelled'));
                 setInProgress(allTasks.filter((task) => task.status === 'In Progress'));
@@ -71,6 +72,10 @@ const AdminPannelGrid = () => {
 
         fetchData();
     }, [isAdmin, token]);
+    
+    useEffect(() => {
+        setCompletionRate((completedTasks.length / totalTasks.length) * 100);
+    }, [completedTasks, totalTasks]);
 
     const renderTaskTitles = (tasks = [], users = [], companies = []) => {
         return (
@@ -78,7 +83,8 @@ const AdminPannelGrid = () => {
                 {tasks && tasks.map((task, index) => (
                     <div key={task._id} className="mb-2">
                         <Typography variant="body1">{`${index + 1}. ${task.title}`}</Typography>
-                        <Typography variant="body2">{task.description}</Typography>
+                        <Typography variant="body2" style={{ fontWeight: 'bold', color: 'black' }}>{task.description}</Typography>
+
                     </div>
                 ))}
                 {users && users.map((user, index) => (

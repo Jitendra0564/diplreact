@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const UserForm = () => {
+const UserForm = ({ onBack }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
@@ -105,6 +105,7 @@ const UserForm = () => {
         alert('User created successfully');
         resetForm();
         navigate('/user');
+        onBack(); // Call onBack callback
       } else {
         console.error('Error creating user');
       }

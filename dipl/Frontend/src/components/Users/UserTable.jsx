@@ -73,7 +73,7 @@ const UserTable = () => {
     }, []);
 
     const fetchData = async () => {
-        const token = localStorage.getItem('token'); // or however you store the token
+        const token = localStorage.getItem('token'); 
 
         try {
             const response = await axios.get('http://localhost:5000/api/users/users', {

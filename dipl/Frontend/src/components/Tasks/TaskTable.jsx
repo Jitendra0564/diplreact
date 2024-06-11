@@ -78,6 +78,7 @@ const TaskTable = () => {
     const [historyDialogOpen, setHistoryDialogOpen] = useState(false);
     const [taskHistory, setTaskHistory] = useState([]);
     const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarColor, setSnackbarColor] = useState('');
     const [alertMessage, setAlertMessage] = useState('');
     const [alertColor, setAlertColor] = useState(''); 
 
@@ -244,7 +245,7 @@ const TaskTable = () => {
             setTasks(updatedTasks);
             setSnackbarMessage('Task updated successfully!');
             setSnackbarOpen(true);
-            setAlertColor('green');
+            setSnackbarColor('teal'); 
             handleCloseTaskUpdateDialog();
         } catch (error) {
             if (error.response && error.response.data && error.response.data.msg) {
@@ -276,7 +277,8 @@ const TaskTable = () => {
 
             const updatedTasks = tasks.filter(task => task._id !== selectedTask._id);
             setTasks(updatedTasks);
-            setSnackbarMessage('Task deleted successfully!');
+            setSnackbarMessage('Task successfully deleted!');
+            setSnackbarColor('green');
             setSnackbarOpen(true);
             handleDeleteConfirmationClose();
         } catch (error) {
@@ -326,6 +328,7 @@ const TaskTable = () => {
             setTasks(updatedTasks);
             setSnackbarMessage('Task scheduled successfully!');
             setSnackbarOpen(true);
+            setSnackbarColor('gray');
             handleScheduleDialogClose();
         } catch (error) {
             console.error('Error scheduling task:', error);
@@ -363,6 +366,7 @@ const TaskTable = () => {
           setTasks(updatedTasks);
           setSnackbarMessage('Task rescheduled successfully!');
           setSnackbarOpen(true);
+          setSnackbarColor('purple');
           handleRescheduleDialogClose();
         } catch (error) {
           console.error('Error rescheduling task:', error);
@@ -771,6 +775,9 @@ const TaskTable = () => {
                 autoHideDuration={6000}
                 onClose={() => setSnackbarOpen(false)}
                 message={snackbarMessage}
+                ContentProps={{
+                    style: { backgroundColor: snackbarColor }, // Apply snackbarColor to background color
+                }}
                 action={
                     <IconButton size="small" aria-label="close" color="inherit" onClick={() => setSnackbarOpen(false)}>
                         <MdClose fontSize="small" />

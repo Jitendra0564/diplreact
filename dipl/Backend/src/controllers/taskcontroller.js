@@ -95,7 +95,8 @@ exports.getAllTasks = async (req, res) => {
 // Update a task
 exports.updateTask = async (req, res) => {
   try {
-    const { title, description, status, assignDate, dueDate, assignedTo } = req.body;
+    const { title, description, status, assignDate, DueDate } = req.body;
+    const assignedTo = req.user.id;
     const taskId = req.params.id;
     const isAdmin = req.user.isAdmin;
 
@@ -108,7 +109,7 @@ exports.updateTask = async (req, res) => {
     // Find and update the task
     const updatedTask = await Task.findByIdAndUpdate(
       taskId,
-      { title, description, status, assignDate, dueDate, assignedTo },
+      { title, description, status, assignDate, DueDate, assignedTo },
       { new: true }
     );
 
@@ -235,7 +236,7 @@ exports.deleteTask = async (req, res) => {
     // Delete the task
     await Task.deleteOne({ _id: taskId });
 
-    res.json({ msg: 'Task deleted' });
+    res.json({ msg: 'Task Successfully deleted',color: 'green' });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');

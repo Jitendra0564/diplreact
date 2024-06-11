@@ -3,7 +3,17 @@ import { BsHouseAdd } from "react-icons/bs";
 import { FaTasks } from "react-icons/fa";
 import { HiOutlineUserGroup } from "react-icons/hi";
 
-const Navbar2 = ({ isCompaniesPage, isTaskPage, isUserPage, isToolsPage, onSelectTool, onAddCompanyClick, onAddEmployeeClick, onAssignTaskClick }) => {
+// Function to get the value of a cookie by name
+const getCookieValue = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  };
+
+const Navbar2 = ({ isCompaniesPage, isTaskPage, isUserPage, isToolsPage, onSelectTool, onAddCompanyClick, onAddEmployeeClick, onAssignTaskClick}
+     
+) => {
+    const isAdmin = getCookieValue('isAdmin') === 'true';
     return (
         <nav className="h-16 flex flex-col text-center content-center sm:flex-row sm:text-left sm:justify-between py-2 px-6  border-b rtl:border-l rtl:border-b-0 dark:bg-gray-100 dark:border-gray-300 shadow sm:items-baseline w-full">
             <div className="mb-2 sm:mb-0 inner">
@@ -34,7 +44,7 @@ const Navbar2 = ({ isCompaniesPage, isTaskPage, isUserPage, isToolsPage, onSelec
 
                     </>
                 )}
-                {isUserPage && (
+                {isUserPage && isAdmin && (
                     <>
                         <div className='flex items-center justify-center'>
 
