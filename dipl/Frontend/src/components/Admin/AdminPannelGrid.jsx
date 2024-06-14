@@ -95,7 +95,7 @@ const AdminPannelGrid = () => {
                 ))}
                 {companies && companies.map((company, index) => (
                     <div key={company._id} className="mb-2">
-                        <Typography variant="body1">{`${index + 1}. ${company.name}`}</Typography>
+                        <Typography variant="body1" style={{ fontWeight: 'bold', color: 'blue' }}>{`${index + 1}. ${company.name}`}</Typography>
                     </div>
                 ))}
             </>
@@ -399,7 +399,7 @@ const AdminPannelGrid = () => {
                                                         src={temployees}
                                                         className="w-15 h-12 bg-center bg-cover" alt="Score" />
                                                     <div>
-                                                        <h3 className="text-lg font-semibold text-black">Total Companies</h3>
+                                                        <h3 className="text-lg font-semibold text-black">Total Companies:</h3>
                                                         <p className="text-gray-500 text-md">Companies</p>
                                                     </div>
                                                 </div>

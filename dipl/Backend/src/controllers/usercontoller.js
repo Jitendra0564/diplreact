@@ -35,7 +35,7 @@ const upload = multer({ storage, fileFilter });
 // User registration controller
 exports.registerUser = async (req, res) => {
   try {
-    const { name, email, password, fatherName, isAdmin, motherName, contactNo, AlternativeNo, fatherNo, Address, BankName, BankAccNo, Ifsc, Department, Position, Role, AadharCardNo, PanCardNo, joiningdate, Education, workHistory, Language, Status } = req.body;
+    const { name, email, dob, password,  fatherName, isAdmin, motherName, contactNo, AlternativeNo, fatherNo, Address, BankName, BankAccNo, Ifsc, Department, Position, Role, AadharCardNo, PanCardNo, joiningdate, Education, workHistory, Language, Status } = req.body;
 
     // Check if the user already exists
     const userExists = await User.findOne({ email });
@@ -51,6 +51,7 @@ exports.registerUser = async (req, res) => {
     const newUser = new User({
       name,
       email,
+      dob,
       password: hashedPassword,
       isAdmin, // Set to false by default
       fatherName,
@@ -66,8 +67,8 @@ exports.registerUser = async (req, res) => {
       Position,
       Role,
       joiningdate,
-      workHistory,
-      Education,
+      workHistory: Array.isArray(workHistory) ? workHistory : JSON.parse(workHistory),
+      Education: Array.isArray(Education) ? Education : JSON.parse(Education),
       Language,
       Status,
       AadharCardNo,
@@ -269,7 +270,7 @@ exports.getUserById = async (req, res) => {
   }
 };
 
-
+// Get all users with only 3 fields
 exports.getUsers = async (req, res) => {
   try {
     let users;

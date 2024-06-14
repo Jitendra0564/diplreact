@@ -46,7 +46,7 @@ const TaskCard = () => {
         return tasks.map((task, index) => (
             <div key={task._id} className="mb-2">
                 <Typography variant="body1">{`${index + 1}.${task.title}`}</Typography>
-                <Typography variant="body1">{task.description}</Typography>
+                <Typography variant="body1"style={{ fontWeight: 'bold', color: 'black' }}>{task.description}</Typography>
             </div>
         ));
     };

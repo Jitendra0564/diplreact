@@ -5,7 +5,7 @@ const cors = require('cors');
 const { authenticateToken } = require('./middleware');
 
 dotenv.config();
-
+require('dotenv').config();
 const app = express();
 
 // Middleware
@@ -50,11 +50,14 @@ app.use((err, req, res, next) => {
 // MongoDB connection
 mongoose
   .connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+    //useNewUrlParser: true,
+    //useUnifiedTopology: true,
   })
   .then(() => console.log('MongoDB connected'))
   .catch((err) => console.log(err));
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+  if (process.env.NODE_ENV !== 'test') {
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+  }
+  module.exports = app;

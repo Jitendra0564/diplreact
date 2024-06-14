@@ -93,7 +93,14 @@ const LoginWithGoogleButton = () => {
                     <form onSubmit={handleSubmit}>
                         <div className="mt-4">
                             <label className="block text-gray-700 text-sm font-bold mb-2">Email Address</label>
-                            <input className={`text-gray-700 border ${emailError ? 'border-red-500' : 'border-gray-300'} rounded py-2 px-4 block w-full focus:outline-2 focus:outline-blue-700`} type="email" value={email} onChange={handleEmailChange} required />
+                            <input
+                                className={`text-gray-700 border ${emailError ? 'border-red-500' : 'border-gray-300'} rounded py-2 px-4 block w-full focus:outline-2 focus:outline-blue-700`}
+                                type="email"
+                                value={email}
+                                onChange={handleEmailChange}
+                                required
+                            />
+
                             {emailError && <p className="text-red-500 text-xs mt-1">{emailError}</p>}
                         </div>
                         <div className="mt-4 flex flex-col justify-between">
