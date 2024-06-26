@@ -9,29 +9,9 @@ const UsersProfile = () => {
   const { userId } = useParams();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [photoUrl, setPhotoUrl] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchData();
-  }, [userId]);
-
-  const fetchData = async () => {
-    try {
-      const token = getCookieValue('token');
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      const userResponse = await axios.get(`http://localhost:5000/api/users/${userId}`);
-      const filesResponse = await axios.get(`http://localhost:5000/api/users/${userId}/files`);
-      setUser({ ...userResponse.data, files: filesResponse.data.files });
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      setLoading(false);
-    }
-  };
 
   const getCookieValue = (name) => {
     const value = `; ${document.cookie}`;
@@ -43,6 +23,58 @@ const UsersProfile = () => {
     return `http://localhost:5000/api/users/${userId}/files/${fileId}`;
   };
 
+  
+  useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const token = getCookieValue('token');
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const userResponse = await axios.get(`http://localhost:5000/api/users/${userId}`,config);
+      const filesResponse = await axios.get(`http://localhost:5000/api/users/${userId}/files`,config);
+      setUser({ ...userResponse.data, files: filesResponse.data.files });
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setLoading(false);
+    }
+  };
+  
+    fetchData();
+  }, [userId]);
+ 
+
+  useEffect(() => {
+    const fetchPhoto = async () => {
+      if (user && user.files) {
+        const photoFile = user.files.find(file => file.metadata.fileCategory === 'photo');
+        if (photoFile) {
+          try {
+            const token = getCookieValue('token');
+            const config = {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+              responseType: 'blob',
+            };
+            const response = await axios.get(getFileUrlById(photoFile._id), config);
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            setPhotoUrl(url);
+          } catch (error) {
+            console.error('Error fetching photo:', error);
+          }
+        } else {
+          setPhotoUrl(null);
+        }
+      }
+    };
+
+    fetchPhoto();
+  }, [user, userId]);
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -50,6 +82,7 @@ const UsersProfile = () => {
   if (!user) {
     return <div>No user profile available</div>;
   }
+
 
  
 
@@ -67,7 +100,19 @@ const UsersProfile = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
             <div className="bg-gray-50 shadow-xl my-4 mx-4 border border-gray-300 rounded-lg">
               <div className='px-4 py-4 rounded-lg'>
-                <img src="https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg" alt="Avatar" className='h-20 w-20 rounded-md shadow-md' />
+              {photoUrl ? (
+                  <div>
+                    <h4 className='font-bold text-md'>User Photo:</h4>
+                    <img 
+                      src={photoUrl} 
+                      alt="User Photo" 
+                      className='h-40 w-40 object-cover rounded-md shadow-md'
+                      onError={() => setPhotoUrl(null)}
+                    />
+                  </div>
+                ) : (
+                  <div>No photo available</div>
+                )}
               </div>
               <div className='px-4 py-2'>
                 <h4 className='font-bold text-xl'>{user.name}</h4>
