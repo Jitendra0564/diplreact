@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon app.js",
-    "test": "cross-env NODE_ENV=test jest"
+     "test": "cross-env NODE_ENV=test jest"
   },
   "author": "jitendra05644@gmail.com",
   "license": "ISC",

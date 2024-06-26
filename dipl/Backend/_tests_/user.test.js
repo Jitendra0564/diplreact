@@ -102,7 +102,7 @@ describe('User Endpoints', () => {
   it('should create a new user', async () => {
     const res = await request(app)
       .post('/api/users')
-      .set('Authorization', `Bearer ${adminToken}`)
+      .set('Authorization', `Bearer ${Admintoken}`)
       .send({
         name: 'New User',
         email: 'newuser@example.com',
