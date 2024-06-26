@@ -62,12 +62,12 @@ const Navbar2 = ({ isCompaniesPage, isTaskPage, isUserPage, isToolsPage, onSelec
                         <div className='flex items-center justify-center'>
                             <li className='flex items-center p-2 text-gray-700 focus:outline-nones transition-colors duration-200 rounded-lg dark:text-gray-100 dark:hover:bg-gray-300 hover:bg-gray-100 '>
                                 {/* <BsHouseAdd className='text-md font-semibold ' /> */}
-                                <a href="#" className="text-md font-semibold no-underline px-2 text-gray-700" onClick={() => onSelectTool('taskManagement')} ><FaTasks />
+                                <a href="#" className="text-md font-semibold no-underline px-2 text-gray-700" onClick={() => onSelectTool('taskManagement')} data-testid="task-management-icon"><FaTasks />
                                 </a>
 
                             </li>
                             <li className='flex items-center p-2 text-gray-700 focus:outline-nones transition-colors duration-200 rounded-lg dark:text-gray-100 dark:hover:bg-gray-300 hover:bg-gray-100'>
-                                <a href="#" className="text-md font-semibold no-underline px-2 text-gray-700" onClick={() => onSelectTool('meetingsSystem')} ><HiOutlineUserGroup />
+                                <a href="#" className="text-md font-semibold no-underline px-2 text-gray-700" onClick={() => onSelectTool('meetingsSystem')}data-testid="meetings-system-icon" ><HiOutlineUserGroup />
                                 </a>
                             </li>
                         </div>

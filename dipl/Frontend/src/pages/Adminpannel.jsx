@@ -11,10 +11,8 @@ const Adminpannel = () => {
         <>
             <div className='flex h-screen overflow-hidden'>
                 <Sidebar />
-                <div className='relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden'>
-
+                <div className='relative flex flex-1 flex-col overflow-y-auto '>
                     <main>
-
                         <AdminPannelGrid />
                     </main>
 

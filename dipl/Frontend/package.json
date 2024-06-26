@@ -2,20 +2,16 @@
   "name": "dipl",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
+ 
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "jest"
+   
   },
-  "jest": {
-    "testEnvironment": "jsdom",
-    "transform": {
-      "^.+\\.jsx?$": "babel-jest"
-    }
-  },
+  
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
@@ -39,7 +35,8 @@
     "@babel/preset-react": "^7.24.7",
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^16.0.0",
-    "@types/react": "^18.2.66",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/react": "^18.2.66","type": "module",
     "@types/react-dom": "^18.2.22",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.19",

@@ -161,10 +161,12 @@ const CompaniesTable = () => {
         customToolbar: () => (
             <Button
                 onClick={handleOpenCompaniesForm}
+                data-testid="add-company-button"
                 className="relative inline-flex items-center justify-center w-10 h-10 rounded-full text-white hover:bg-gray-700 hover:text-blue-400 focus:outline-none transition duration-300 ease-in-out"
+
             >
-                <MdOutlineAddTask className="text-xl" />
-            </Button>
+            <MdOutlineAddTask className="text-xl" />
+        </Button>
         ),
     };
 
@@ -227,7 +229,7 @@ const CompaniesTable = () => {
                     <AddCompaniesForm onBack={handleCloseCompaniesForm} />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseCompaniesForm} color="primary">
+                    <Button onClick={handleCloseCompaniesForm} color="primary" data-testid="close-button">
                         Cancel
                     </Button>
                 </DialogActions>

@@ -493,6 +493,7 @@ const TaskTable = () => {
         responsive: 'scroll',
         customToolbar: () => (
             <Button
+              data-testid="add-task-button"
                 onClick={handleOpenTaskForm}
                 className="relative inline-flex items-center justify-center w-10 h-10 rounded-full text-white hover:bg-gray-700 hover:text-blue-400 focus:outline-none transition duration-300 ease-in-out"
             >
@@ -505,7 +506,7 @@ const TaskTable = () => {
     return (
 
         <div className="">
-            <div className='mx-6 my-6 mt-6 mb-6'>
+            <div className='mx-6 my-6 mt-6 mb-6'   data-testid="task-list">
                 <ThemeProvider theme={getMuiTheme()}>
                     <MUIDataTable
                         title="Task List"

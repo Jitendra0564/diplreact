@@ -19,7 +19,6 @@ const AssignTaskForm = ({ onBack }) => {
                 console.error('Error fetching users:', error);
             }
         };
-
         fetchUsers();
     }, []);
 
@@ -44,7 +43,7 @@ const AssignTaskForm = ({ onBack }) => {
     const onSubmit = async (values, { resetForm, setSubmitting }) => {
         try {
             const response = await axios.post('http://localhost:5000/api/tasks/', values);
-            //console.log('Task created successfully:', response.data);
+            console.log('Task created successfully:', response.data);
             alert('Task assigned successfully!');
             resetForm();
             setShowSuccessAlert(true);
@@ -112,7 +111,7 @@ const AssignTaskForm = ({ onBack }) => {
 
                         {/* End Date */}
                         <div className="mb-4">
-                            <label htmlFor="dueDate" className="block text-sm font-medium text-white">End Date</label>
+                            <label htmlFor="DueDate" className="block text-sm font-medium text-white">End Date</label>
                             <Field
                                 type="date"
                                 id="DueDate"

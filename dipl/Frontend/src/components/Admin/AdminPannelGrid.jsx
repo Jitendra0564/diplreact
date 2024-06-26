@@ -113,7 +113,7 @@ const AdminPannelGrid = () => {
 
     return (
         <>
-            <section className="py-20 bg-gray-300 h-full">
+            <section className="py-20 bg-gray-300 h-screen overflow-y-scroll">
                 <div className="max-w-6xl mx-8 md:mx-10 lg:mx-20 xl:mx-auto">
                     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
                         <ul className="space-y-8">
@@ -130,14 +130,15 @@ const AdminPannelGrid = () => {
                                                         class="w-12 h-10 bg-center bg-cover " alt="Tasks" />
                                                     <div className='p-3'>
 
-                                                        <h3 className="text-lg font-semibold text-black"> {isAdmin ? 'Total Tasks' : 'Tasks Assigned to You'}</h3>
+                                                        <h3 className="text-lg font-semibold text-black"data-testid="total-tasks-title"> {isAdmin ? 'Total Tasks' : 'Tasks Assigned to You'}</h3>
                                                         <p className="text-gray-500 text-md">Admin &amp; Employee</p>
                                                     </div>
                                                 </div>
-                                                <h4 className=" text-gray-500 font-bold text-xl"> {totalTasks.length}</h4>
+                                                <h4 className=" text-gray-500 font-bold text-xl"data-testid="total-tasks-count"> {totalTasks.length}</h4>
                                                 <Button
                                                     className="w-full text-purple-600 bg-purple-100 hover:bg-purple-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
                                                     onClick={() => toggleTaskList('total')}
+                                                    data-testid="view-list-button"
                                                 >
                                                     View List
                                                 </Button>
@@ -181,15 +182,16 @@ const AdminPannelGrid = () => {
                                                         class="w-12 h-10 bg-center bg-cover " alt="Tasks" />
                                                     <div className='p-3'>
 
-                                                        <h3 className="text-lg font-semibold text-black">Pending Tasks</h3>
+                                                        <h3 className="text-lg font-semibold text-black"data-testid="pending-tasks-title">Pending Tasks</h3>
                                                         <p className="text-gray-500 text-md"> Employee</p>
                                                     </div>
                                                 </div>
 
-                                                <h4 className=" text-gray-500 font-bold text-xl"> {pendingTasks.length}</h4>
+                                                <h4 className=" text-gray-500 font-bold text-xl"data-testid="pending-tasks-count"> {pendingTasks.length}</h4>
                                                 <Button
                                                     className="w-full text-red-600 bg-red-100 hover:bg-red-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
                                                     onClick={() => toggleTaskList('Pending')}
+                                                   data-testid="view-Pendinglist-button"
                                                 >
                                                     View List
                                                 </Button>
@@ -350,11 +352,11 @@ const AdminPannelGrid = () => {
                                                 src={rtcomplition}
                                                 className="w-15 h-12 bg-center bg-cover" alt="Score" />
                                                 <div>
-                                                    <h3 className="text-lg font-semibold text-black">Rate Of Task Completion</h3>
+                                                    <h3 className="text-lg font-semibold text-black"data-testid="rate-of-task-completion">Rate Of Task Completion</h3>
                                                     <p className="text-gray-500 text-md">Completion Rate</p>
                                                 </div>
                                             </div>
-                                            <h1 className=" text-gray-900 font-bold text-8xl text-center ">{Math.round(completionRate)}<span className="text-sm font-bold">%</span></h1>
+                                            <h1 className=" text-gray-900 font-bold text-8xl text-center "data-testid="completion-rate">{Math.round(completionRate)}<span className="text-sm font-bold">%</span></h1>
                                         </div>
                                     </a>
                                 </div>
@@ -371,14 +373,15 @@ const AdminPannelGrid = () => {
                                                         src={completedtask}
                                                         class="w-12 h-10 bg-center bg-cover" alt="Tasks" />
                                                     <div className='p-3'>
-                                                        <h3 className="text-lg font-semibold text-black">Total Completed Tasks</h3>
+                                                        <h3 className="text-lg font-semibold text-black"data-testid="Completed-title">Total Completed Tasks</h3>
                                                         <p className="text-gray-500 text-md"> Employee</p>
                                                     </div>
                                                 </div>
-                                                <h4 className=" text-gray-500 font-bold text-xl">{completedTasks.length}</h4>
+                                                <h4 className=" text-gray-500 font-bold text-xl"data-testid="Completed-task">{completedTasks.length}</h4>
                                                 <Button
                                                     className="w-full text-red-600 bg-red-100 hover:bg-red-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
                                                     onClick={() => toggleTaskList('Completed')}
+                                                    data-testid="view-Completed-list"
                                                 >
                                                     View List
                                                 </Button>
@@ -399,14 +402,15 @@ const AdminPannelGrid = () => {
                                                         src={temployees}
                                                         className="w-15 h-12 bg-center bg-cover" alt="Score" />
                                                     <div>
-                                                        <h3 className="text-lg font-semibold text-black">Total Companies:</h3>
+                                                        <h3 className="text-lg font-semibold text-black" data-testid="Companie-title">Total Companies:</h3>
                                                         <p className="text-gray-500 text-md">Companies</p>
                                                     </div>
                                                 </div>
-                                                <h1 className="text-gray-900 font-bold text-8xl text-center">{totalCompanies.length}<span className="text-sm font-bold">-Only</span></h1>
+                                                <h1 className="text-gray-900 font-bold text-8xl text-center"data-testid="Companies">{totalCompanies.length}<span className="text-sm font-bold">-Only</span></h1>
                                                 <Button
                                                     className="w-full text-indigo-600 bg-indigo-100 hover:bg-indigo-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
                                                     onClick={() => toggleTaskList('Companies')}
+                                                    data-testid="Companie-list"
                                                 >
                                                     View List
                                                 </Button>
@@ -443,7 +447,7 @@ const AdminPannelGrid = () => {
                         overflowY: 'auto', // Enable vertical scrolling
                     }}
                 >
-                    <Typography id="task-list-modal-title" variant="h6" component="h2">
+                    <Typography id="task-list-modal-title" variant="h6" component="h2" data-testid="modal-heading">
                         {visibleTaskList === 'total'
                             ? 'Total Tasks'
                             : visibleTaskList === 'Completed'
@@ -469,7 +473,7 @@ const AdminPannelGrid = () => {
                         {visibleTaskList === 'Employees' && renderTaskTitles([], totalEmployees, [])}
                         {visibleTaskList === 'Companies' && renderTaskTitles([], [], totalCompanies)}
                     </div>
-                    <Button onClick={closeModal} variant="contained" color="primary" sx={{ mt: 2 }}>
+                    <Button onClick={closeModal} variant="contained" color="primary" sx={{ mt: 2 }}data-testid="close-button">
                         Close
                     </Button>
                 </Box>

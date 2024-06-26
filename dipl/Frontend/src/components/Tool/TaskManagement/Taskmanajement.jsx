@@ -7,16 +7,16 @@ import MeetingsTable from '../../Meetings/MeetingsTable'
 const Taskmanajement = () => {
     return (
         <>
-            <div>
+            <div data-testid="task-card">
                 <TaskCard />
             </div>
-            <div >
+            <div data-testid="task-table">
                 <TaskTable />
-            </div>
-            <div>
+            </div >
+            <div data-testid="project-table">
                 <ProjectTable />
             </div>
-            <div>
+            <div data-testid="meetings-table">
                 <MeetingsTable />
             </div>
 

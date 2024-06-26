@@ -97,10 +97,10 @@ const TaskCard = () => {
                                 </svg>
                             </div>
                             <div>
-                                <div className="text-gray-600 text-sm">
+                                <div className="text-gray-600 text-sm"data-testid="total-tasks-title">
                                     {isAdmin ? 'Total Tasks' : 'Tasks Assigned to You'}
                                 </div>
-                                <div className="text-gray-900 text-2xl font-semibold">
+                                <div className="text-gray-900 text-2xl font-semibold" data-testid="total">
                                     {totalTasks.length}
                                 </div>
                             </div>
@@ -108,6 +108,7 @@ const TaskCard = () => {
                         <Button
                             className="w-full text-purple-600 bg-purple-100 hover:bg-purple-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
                             onClick={() => toggleTaskList('total')}
+                            data-testid="view-list-button"
                         >
                             View List
                         </Button>
@@ -147,8 +148,8 @@ const TaskCard = () => {
                                 </svg>
                             </div>
                             <div>
-                                <div className="text-gray-600 text-sm">Total Completed Tasks</div>
-                                <div className="text-2xl font-semibold text-green-500">
+                                <div className="text-gray-600 text-sm"data-testid="total-Completed-title">Total Completed Tasks</div>
+                                <div className="text-2xl font-semibold text-green-500"data-testid="completed">
                                     {completedTasks.length}
                                 </div>
                             </div>
@@ -156,6 +157,7 @@ const TaskCard = () => {
                         <Button
                             className="w-full text-green-600 bg-green-100 hover:bg-green-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
                             onClick={() => toggleTaskList('Completed')}
+                            data-testid="view-Completed-button"
                         >
                             View List
                         </Button>
@@ -195,8 +197,8 @@ const TaskCard = () => {
                                 </svg>
                             </div>
                             <div>
-                                <div className="text-gray-600 text-sm">Total Pending Tasks</div>
-                                <div className="text-yellow-900 text-2xl font-semibold">
+                                <div className="text-gray-600 text-sm"data-testid="total-Pending-title">Total Pending Tasks</div>
+                                <div className="text-yellow-900 text-2xl font-semibold"data-testid="pending">
                                     {pendingTasks.length}
                                 </div>
                             </div>
@@ -204,6 +206,7 @@ const TaskCard = () => {
                         <Button
                             className="w-full text-yellow-600 bg-yellow-100 hover:bg-yellow-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
                             onClick={() => toggleTaskList('Pending')}
+                            data-testid="view-Pending-button"
                         >
                             View List
                         </Button>
@@ -243,8 +246,8 @@ const TaskCard = () => {
                                 </svg>
                             </div>
                             <div>
-                                <div className="text-gray-600 text-sm">Total Expired Tasks</div>
-                                <div className="text-red-700 text-2xl font-semibold">
+                                <div className="text-gray-600 text-sm"data-testid="total-Expired-title">Total Expired Tasks</div>
+                                <div className="text-red-700 text-2xl font-semibold"data-testid="expired">
                                     {expiredTasks.length}
                                 </div>
                             </div>
@@ -252,6 +255,7 @@ const TaskCard = () => {
                         <Button
                             className="w-full text-red-600 bg-red-100 hover:bg-red-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
                             onClick={() => toggleTaskList('Cancelled')}
+                            data-testid="view-Expired-button"
                         >
                             View List
                         </Button>
@@ -290,8 +294,8 @@ const TaskCard = () => {
                                 </svg>
                             </div>
                             <div>
-                                <div className="text-gray-600 text-sm">Total In Progress Tasks</div>
-                                <div className="text-2xl  text-green-700 font-semibold">
+                                <div className="text-gray-600 text-sm"data-testid="total-InProgress-title">Total In Progress Tasks</div>
+                                <div className="text-2xl  text-green-700 font-semibold"data-testid="inprogress">
                                     {InProgressTasks.length}
                                 </div>
                             </div>
@@ -299,6 +303,7 @@ const TaskCard = () => {
                         <Button
                             className="w-full text-red-600 bg-red-100 hover:bg-red-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
                             onClick={() => toggleTaskList('In Progress')}
+                             data-testid="view-In Progress-button"
                         >
                             View List
                         </Button>
@@ -328,7 +333,7 @@ const TaskCard = () => {
                         overflowY: 'auto', // Enable vertical scrolling
                     }}
                 >
-                    <Typography id="task-list-modal-title" variant="h6" component="h2">
+                    <Typography id="task-list-modal-title" variant="h6" component="h2" data-testid="modal-heading">
                         {visibleTaskList === 'total' && 'Total Tasks'}
                         {visibleTaskList === 'Completed' && 'Completed Tasks'}
                         {visibleTaskList === 'Pending' && 'Pending Tasks'}
@@ -342,7 +347,7 @@ const TaskCard = () => {
                         {visibleTaskList === 'Cancelled' && renderTaskTitles(expiredTasks)}
                         {visibleTaskList === 'In Progress' && renderTaskTitles(InProgressTasks)}
                     </div>
-                    <Button onClick={closeModal} variant="contained" color="primary" sx={{ mt: 2 }}>
+                    <Button onClick={closeModal} variant="contained" color="primary" sx={{ mt: 2 }} data-testid="close-button">
                         Close
                     </Button>
                 </Box>
