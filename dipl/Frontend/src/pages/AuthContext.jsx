@@ -37,6 +37,9 @@ export const AuthProvider = ({ children }) => {
      window.history.pushState(null, '', window.location.href);
     window.addEventListener('popstate', handleBackButton);
   };
+  const handleBackButton = () => {
+    navigate('/login', { replace: true });
+  };
 
   return (
     <AuthContext.Provider value={{ auth, login, logout }}>
