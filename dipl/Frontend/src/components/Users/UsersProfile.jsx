@@ -102,7 +102,7 @@ const UsersProfile = () => {
              <div className='px-4 py-4 rounded-lg'>
               {photoUrl ? (
                   <div>
-                    <h4 className='font-bold text-md'>User Photo:</h4>
+                    <h4 className='font-bold text-md'>{user.name}:</h4>
                     <img 
                       src={photoUrl} 
                       alt="User Photo" 
