@@ -11,28 +11,6 @@ const UsersProfile = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchData();
-  }, [userId]);
-
-  const fetchData = async () => {
-    try {
-      const token = getCookieValue('token');
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      const userResponse = await axios.get(`http://localhost:5000/api/users/${userId}`);
-      const filesResponse = await axios.get(`http://localhost:5000/api/users/${userId}/files`);
-      setUser({ ...userResponse.data, files: filesResponse.data.files });
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      setLoading(false);
-    }
-  };
-
   const getCookieValue = (name) => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -43,6 +21,58 @@ const UsersProfile = () => {
     return `http://localhost:5000/api/users/${userId}/files/${fileId}`;
   };
 
+  
+  useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const token = getCookieValue('token');
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const userResponse = await axios.get(`http://localhost:5000/api/users/${userId}`,config);
+      const filesResponse = await axios.get(`http://localhost:5000/api/users/${userId}/files`,config);
+      setUser({ ...userResponse.data, files: filesResponse.data.files });
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setLoading(false);
+    }
+  };
+  
+    fetchData();
+  }, [userId]);
+ 
+
+  useEffect(() => {
+    const fetchPhoto = async () => {
+      if (user && user.files) {
+        const photoFile = user.files.find(file => file.metadata.fileCategory === 'photo');
+        if (photoFile) {
+          try {
+            const token = getCookieValue('token');
+            const config = {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+              responseType: 'blob',
+            };
+            const response = await axios.get(getFileUrlById(photoFile._id), config);
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            setPhotoUrl(url);
+          } catch (error) {
+            console.error('Error fetching photo:', error);
+          }
+        } else {
+          setPhotoUrl(null);
+        }
+      }
+    };
+
+    fetchPhoto();
+  }, [user, userId]);
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -50,6 +80,8 @@ const UsersProfile = () => {
   if (!user) {
     return <div>No user profile available</div>;
   }
+
+
 
  
 
