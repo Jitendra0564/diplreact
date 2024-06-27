@@ -32,6 +32,7 @@ export const AuthProvider = ({ children }) => {
       user: null,
     });
     localStorage.removeItem('authenticateToken'); // Remove auth token from localStorage or cookies
+     sessionStorage.removeItem('authenticateToken');
     navigate('/login', { replace: true }); // Redirect to login page after logout and replace history
   };
 
