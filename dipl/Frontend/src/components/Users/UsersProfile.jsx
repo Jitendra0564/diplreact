@@ -99,8 +99,20 @@ const UsersProfile = () => {
           </button>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
             <div className="bg-gray-50 shadow-xl my-4 mx-4 border border-gray-300 rounded-lg">
-              <div className='px-4 py-4 rounded-lg'>
-                <img src="https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg" alt="Avatar" className='h-20 w-20 rounded-md shadow-md' />
+             <div className='px-4 py-4 rounded-lg'>
+              {photoUrl ? (
+                  <div>
+                    <h4 className='font-bold text-md'>User Photo:</h4>
+                    <img 
+                      src={photoUrl} 
+                      alt="User Photo" 
+                      className='h-40 w-40 object-cover rounded-md shadow-md'
+                      onError={() => setPhotoUrl(null)}
+                    />
+                  </div>
+                ) : (
+                  <div>No photo available</div>
+                )}
               </div>
               <div className='px-4 py-2'>
                 <h4 className='font-bold text-xl'>{user.name}</h4>
