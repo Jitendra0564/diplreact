@@ -105,7 +105,7 @@ const UsersProfile = () => {
                     <h4 className='font-bold text-md'>{user.name}:</h4>
                     <img 
                       src={photoUrl} 
-                      alt="User Photo" 
+                     
                       className='h-40 w-40 object-cover rounded-md shadow-md'
                       onError={() => setPhotoUrl(null)}
                     />
