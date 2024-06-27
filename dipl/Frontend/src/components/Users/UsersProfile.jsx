@@ -9,6 +9,7 @@ const UsersProfile = () => {
   const { userId } = useParams();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+    const [photoUrl, setPhotoUrl] = useState(null);
   const navigate = useNavigate();
 
   const getCookieValue = (name) => {
