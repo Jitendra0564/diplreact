@@ -41,6 +41,12 @@ export const AuthProvider = ({ children }) => {
     navigate('/login', { replace: true });
   };
 
+   useEffect(() => {
+    return () => {
+      window.removeEventListener('popstate', handleBackButton);
+    };
+  }, []);
+
   return (
     <AuthContext.Provider value={{ auth, login, logout }}>
       {children}
