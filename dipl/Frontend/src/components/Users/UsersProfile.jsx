@@ -102,10 +102,9 @@ const UsersProfile = () => {
              <div className='px-4 py-4 rounded-lg'>
               {photoUrl ? (
                   <div>
-                    <h4 className='font-bold text-md'>{user.name}:</h4>
                     <img 
                       src={photoUrl} 
-                     
+                      alt="user photo"
                       className='h-40 w-40 object-cover rounded-md shadow-md'
                       onError={() => setPhotoUrl(null)}
                     />
