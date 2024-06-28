@@ -75,7 +75,12 @@ exports.getAllTasks = async (req, res) => {
         });
     } else {
       // If the user is not an admin, fetch only the tasks assigned to them
-      tasks = await Task.find({ assignedTo: authenticatedUserId })
+      tasks = await Task.find({
+        $or: [
+            { assignedTo: authenticatedUserId },
+            { createdBy: authenticatedUserId }
+        ]
+      })
         .populate('assignedTo', 'name')
         .populate('createdBy', 'name')
         .populate({
@@ -95,28 +100,36 @@ exports.getAllTasks = async (req, res) => {
 // Update a task
 exports.updateTask = async (req, res) => {
   try {
-    const { title, description, status, assignDate, DueDate } = req.body;
-    const assignedTo = req.user.id;
+    const { title, description, status, assignDate, DueDate, assignedTo } = req.body;
     const taskId = req.params.id;
-    const isAdmin = req.user.isAdmin;
+    const currentUser = req.user;
 
-    // Check if the authenticated user is an admin
-    if (!isAdmin) {
-      return res.status(403).json({ msg: 'Access denied. Only admins can update tasks.', color: 'red' });
-
-    }
-
-    // Find and update the task
-    const updatedTask = await Task.findByIdAndUpdate(
-      taskId,
-      { title, description, status, assignDate, DueDate, assignedTo },
-      { new: true }
-    );
+    // Find the task
+    const task = await Task.findById(taskId);
 
     // If the task is not found, return a 404 error
-    if (!updatedTask) {
+    if (!task) {
       return res.status(404).json({ msg: 'Task not found' });
     }
+
+    let updatedFields = {};
+
+    if (currentUser.isAdmin) {
+      // Admins can update all fields
+      updatedFields = { title, description, status, assignDate, DueDate, assignedTo };
+    } else if ((task.createdBy.toString() === currentUser.id) && (task.createdBy.toString() !== task.assignedTo.toString()) ){
+      // Regular users who assigned the task can update limited fields
+      updatedFields = { title, description, DueDate,status };
+    } else {
+      return res.status(403).json({ msg: 'Access denied. You do not have permission to update this task.', color: 'red' });
+    }
+
+    // Update the task
+    const updatedTask = await Task.findByIdAndUpdate(
+      taskId,
+      updatedFields,
+      { new: true }
+    );
 
     // Return the updated task
     res.json(updatedTask);

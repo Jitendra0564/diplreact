@@ -108,6 +108,7 @@ exports.loginUser = async (req, res) => {
       user: {
         id: user.id,
         isAdmin: user.isAdmin,
+        name: user.name, 
        
       },
     };
@@ -124,7 +125,7 @@ exports.loginUser = async (req, res) => {
           sameSite: 'strict',
           maxAge: 2 * 24 * 60 * 60 * 1000, // 2 days in milliseconds
         });
-        res.json({ token,isAdmin: user.isAdmin  });
+        res.json({ token,name: user.name, isAdmin: user.isAdmin  });
       }
     );
   } catch (err) {
