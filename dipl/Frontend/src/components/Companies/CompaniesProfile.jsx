@@ -29,7 +29,7 @@ const CompaniesProfile = () => {
     const [showProducts, setShowProducts] = useState(false);
     const [showFinancial, setShowFinancial] = useState(false);
     const [selectedDepartment, setSelectedDepartment] = useState(null);
-
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
     const toggleDepartments = () => {
         setShowDepartments(!showDepartments);
     };
@@ -60,7 +60,7 @@ const CompaniesProfile = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get(`http://localhost:5000/api/companies/${CompanyId}`);
+            const response = await axios.get(`${baseURL}/companies/${CompanyId}`);
             console.log('Response data:', response.data);
             setCompany(response.data);
             setLoading(false);

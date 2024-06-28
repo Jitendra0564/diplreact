@@ -3,6 +3,7 @@ import { MdOutlineAddTask, MdMoreVert, MdClose } from 'react-icons/md';
 import MUIDataTable from 'mui-datatables';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 import {
     Button,
     Dialog,
@@ -15,6 +16,8 @@ import {
     TextField,
     Snackbar,
     IconButton,
+    Box,
+    useMediaQuery, useTheme
 } from '@mui/material';
 
 import AssignTaskForm from './AssignTaskForm';
@@ -57,6 +60,7 @@ const TaskTable = () => {
     const [tasks, setTasks] = useState([]);
     const [isTaskFormOpen, setTaskFormOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
+    const [filterType, setFilterType] = useState(null);
     const [selectedTask, setSelectedTask] = useState(null);
     const [openTaskDetailsDialog, setOpenTaskDetailsDialog] = useState(false);
     const [openTaskUpdateDialog, setOpenTaskUpdateDialog] = useState(false);
@@ -81,7 +85,7 @@ const TaskTable = () => {
     const [snackbarColor, setSnackbarColor] = useState('');
     const [alertMessage, setAlertMessage] = useState('');
     const [alertColor, setAlertColor] = useState(''); 
-
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
     useEffect(() => {
 
         fetchData();
@@ -92,7 +96,7 @@ const TaskTable = () => {
 
     const fetchUsers = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/users');
+            const response = await axios.get(`${baseURL}/users`);
             setUsers(response.data);
         } catch (error) {
             console.error('Error fetching users:', error);
@@ -101,7 +105,7 @@ const TaskTable = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/tasks');
+            const response = await axios.get(`${baseURL}/tasks`);
             const formattedData = response.data.map((task, index) => {
                 const createdBy = task.createdBy
                     ? Array.isArray(task.createdBy)
@@ -168,6 +172,47 @@ const TaskTable = () => {
     const handleCloseTaskDetailsDialog = () => {
         setOpenTaskDetailsDialog(false);
     };
+    const handleFilterTasks = (type) => {
+        setFilterType(type);
+        const today = new Date();
+        const tomorrow = new Date();
+        tomorrow.setDate(today.getDate() + 1); // Get tomorrow's date
+
+        const filteredTasks = tasks.filter((task) => {
+            const assignDate = new Date(task.assignDate); // Ensure date parsing
+            const dueDate = new Date(task.DueDate); // Ensure date parsing
+
+            if (type === 'today') {
+                return (
+                    (assignDate >= startOfDay(today) && assignDate <= endOfDay(today)) ||
+                    (dueDate >= startOfDay(today) && dueDate <= endOfDay(today))
+                );
+            } else if (type === 'tomorrow') {
+                return (
+                    (assignDate >= startOfDay(tomorrow) && assignDate <= endOfDay(tomorrow)) ||
+                    (dueDate >= startOfDay(tomorrow) && dueDate <= endOfDay(tomorrow))
+                );
+            }
+            return false;
+        });
+        setTasks(filteredTasks);
+    };
+
+
+    // Helper function to get the start of the day
+    const startOfDay = (date) => {
+        const start = new Date(date);
+        start.setHours(0, 0, 0, 0);
+        return start;
+    };
+
+    // Helper function to get the end of the day
+    const endOfDay = (date) => {
+        const end = new Date(date);
+        end.setHours(23, 59, 59, 999);
+        return end;
+    };
+
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -201,6 +246,9 @@ const TaskTable = () => {
             [name]: value,
         }));
     };
+
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     const statusOptions = ["Pending", "In Progress", "Completed", "Cancelled"];
 
@@ -486,18 +534,67 @@ const TaskTable = () => {
 
     const options = {
         setRowProps,
-        selectableRows: 'none',
-        elevation: 0,
-        rowsPerPage: 5,
-        rowsPerPageOptions: [5, 10, 20, 30],
-        responsive: 'scroll',
+        selectableRows: 'none', 
+        elevation: 0, 
+        rowsPerPage: 5, 
+        rowsPerPageOptions: [5, 10, 20, 30], 
+        responsive: 'standard',
         customToolbar: () => (
-            <Button
-                onClick={handleOpenTaskForm}
-                className="relative inline-flex items-center justify-center w-10 h-10 rounded-full text-white hover:bg-gray-700 hover:text-blue-400 focus:outline-none transition duration-300 ease-in-out"
+           
+        
+            <Box
+            display="flex"
+            justifyContent={isSmallScreen ? "center" : "space-around"}
+            alignItems="center"
+            padding={isSmallScreen ? "8px" : "16px"}
+            flexDirection={isSmallScreen ? "column" : "row"}
+        >
+            <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 300, damping: 10 }}
+                style={{ marginBottom: isSmallScreen ? "8px" : "0" }}
             >
-                <MdOutlineAddTask className="text-xl" />
-            </Button>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<MdOutlineAddTask />}
+                    onClick={handleOpenTaskForm}
+                >
+                    Add Task
+                </Button>
+            </motion.div>
+            <Box display="flex" alignItems="center" flexDirection={isSmallScreen ? "column" : "row"}>
+                <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 10 }}
+                    style={{ marginRight: isSmallScreen ? "0" : "8px", marginBottom: isSmallScreen ? "8px" : "0" }}
+                >
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => handleFilterTasks('today')}
+                    >
+                        Filter Today
+                    </Button>
+                </motion.div>
+                <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 10 }}
+                    style={{ marginRight: '8px', marginBottom: isSmallScreen ? "8px" : "0" }}
+                >
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => handleFilterTasks('tomorrow')}
+                    >
+                        Filter Tomorrow
+                    </Button>
+                </motion.div>
+            </Box>
+        </Box>
         ),
     };
 

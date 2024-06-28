@@ -20,13 +20,14 @@ const CompaniesTable = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null); // Add state for error
     const navigate = useNavigate();
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
         const fetchCompanies = async () => {
             try {
                 setIsLoading(true);
                 setError(null); // Clear any previous error
-                const response = await axios.get('http://localhost:5000/api/companies');
+                const response = await axios.get(`${baseURL}/companies`);
                 
                 // Add serial number to each company object
                 const companiesWithSerialNumber = response.data.map((company, index) => ({
@@ -148,16 +149,11 @@ const CompaniesTable = () => {
     };
 
     const options = {
-        selectableRows: false,
-        rowsPerPage: 5,
-        rowsPerPageOptions: [5, 10, 20, 30],
-        pagination: true,
-        search: true,
-        filter: true,
-        print: true,
-        download: true,
-        viewColumns: true,
-        elevation: 0,
+        selectableRows: 'none', 
+        elevation: 0, 
+        rowsPerPage: 5, 
+        rowsPerPageOptions: [5, 10, 20, 30], 
+        responsive: 'standard',
         customToolbar: () => (
             <Button
                 onClick={handleOpenCompaniesForm}

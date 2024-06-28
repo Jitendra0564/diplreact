@@ -11,7 +11,7 @@ const UsersProfile = () => {
   const [loading, setLoading] = useState(true);
     const [photoUrl, setPhotoUrl] = useState(null);
   const navigate = useNavigate();
-
+  const baseURL = import.meta.env.VITE_API_BASE_URL;
   const getCookieValue = (name) => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -19,7 +19,7 @@ const UsersProfile = () => {
   };
 
   const getFileUrlById = (fileId) => {
-    return `http://localhost:5000/api/users/${userId}/files/${fileId}`;
+    return `${baseURL}/users/${userId}/files/${fileId}`;
   };
 
   
@@ -32,8 +32,8 @@ const UsersProfile = () => {
           Authorization: `Bearer ${token}`,
         },
       };
-      const userResponse = await axios.get(`http://localhost:5000/api/users/${userId}`,config);
-      const filesResponse = await axios.get(`http://localhost:5000/api/users/${userId}/files`,config);
+      const userResponse = await axios.get(`${baseURL}/users/${userId}`,config);
+      const filesResponse = await axios.get(`${baseURL}/users/${userId}/files`,config);
       setUser({ ...userResponse.data, files: filesResponse.data.files });
       setLoading(false);
     } catch (error) {

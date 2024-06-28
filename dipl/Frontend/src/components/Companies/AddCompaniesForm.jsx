@@ -8,10 +8,11 @@ import axios from 'axios';
 const AddCompaniesForm = ({ onBack }) => {
     const navigate = useNavigate();
     const [countries, setCountries] = useState([]);
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
         // Fetch countries data from an API
-        fetch('https://restcountries.com/v2/all')
+        fetch(import.meta.env.VITE_API_URL_GETCOUNTRYBYURL)
           .then(response => response.json())
           .then(data => {
             console.log('Fetched countries:', data); // Log the data to check the structure
@@ -78,7 +79,7 @@ const AddCompaniesForm = ({ onBack }) => {
 
     const onSubmit = async (values, { resetForm, setSubmitting }) => {
         try {
-            const response = await axios.post('http://localhost:5000/api/companies', values);
+            const response = await axios.post(`${baseURL}/companies`, values);
             console.log('Company created successfully:', response.data);
             alert('Company Created successfully!');
             setSubmitting(false);

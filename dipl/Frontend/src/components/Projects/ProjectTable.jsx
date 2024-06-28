@@ -194,10 +194,10 @@ const ProjectTable = () => {
     ];
 
     const options = {
-        selectableRows: false,
-        elevation: 0,
-        rowsPerPage: 5,
-        rowsPerPageOptions: [5, 10, 20, 30],
+        selectableRows: 'none', 
+        elevation: 0, 
+        rowsPerPage: 5, 
+        rowsPerPageOptions: [5, 10, 20, 30], 
         responsive: 'standard',
         customToolbar: () => (
             <Button

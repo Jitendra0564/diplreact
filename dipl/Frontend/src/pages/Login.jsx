@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../pages/AuthContext'; // Import useAuth
 
 // Function to get the value of a cookie by name
 const getCookieValue = (name) => {
@@ -30,6 +31,8 @@ const LoginWithGoogleButton = () => {
     const [passwordError, setPasswordError] = useState("");
     const [loginError, setLoginError] = useState("");
     const navigate = useNavigate();
+    const { login } = useAuth(); // Use the login function from AuthContext
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
@@ -64,13 +67,14 @@ const LoginWithGoogleButton = () => {
 
         if (isValid) {
             try {
-                const response = await axios.post('http://localhost:5000/api/users/login', { email, password });
-                const { token, isAdmin } = response.data;
+                const response = await axios.post(`${baseURL}/users/login`, { email, password });
+                const { token, isAdmin,user,name } = response.data;
 
                 // Set the token and role as cookies
                 document.cookie = `token=${token}; path=/`;
+                document.cookie = `currentUser=${name}; path=/`;
                 document.cookie = `isAdmin=${isAdmin}; path=/`;
-
+                login({ isAdmin, user, token ,name});
                 // Navigate to the appropriate panel based on role
                 if (isAdmin) {
                     navigate('/admin');
@@ -110,7 +114,7 @@ const LoginWithGoogleButton = () => {
                             <input className={`text-gray-700 border ${passwordError ? 'border-red-500' : 'border-gray-300'} rounded py-2 px-4 block w-full focus:outline-2 focus:outline-blue-700`} type="password" value={password} onChange={handlePasswordChange} required />
                             {passwordError && <p className="text-red-500 text-xs mt-1">{passwordError}</p>}
                             {loginError && <p className="text-red-500 text-xs mt-1">{loginError}</p>}
-                            <a href="#" className="text-xs text-gray-500 hover:text-gray-900 text-end w-full mt-2">Forget Password?</a>
+                            {/* <a href="#" className="text-xs text-gray-500 hover:text-gray-900 text-end w-full mt-2">Forget Password?</a> */}
                         </div>
                         <div className="mt-8">
                             <button type="submit" className="bg-blue-700 text-white font-bold py-2 px-4 w-full rounded hover:bg-blue-600">Login</button>

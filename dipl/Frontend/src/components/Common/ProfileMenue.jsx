@@ -258,7 +258,7 @@ export default function AccountMenu() {
                         aria-haspopup="true"
                         aria-expanded={open ? 'true' : undefined}
                     >
-                        <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+                        <Avatar sx={{ width: 32, height: 32 }}><img src="https://img.icons8.com/dusk/64/user-male-circle--v1.png" alt="user-male-circle--v1"/></Avatar>
                     </IconButton>
                 </Tooltip>
             </Box>
@@ -299,10 +299,10 @@ export default function AccountMenu() {
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-                <MenuItem onClick={handleClose}>
+                {/* <MenuItem onClick={handleClose}>
                     <Avatar /> Profile
                 </MenuItem>
-                <Divider />
+                <Divider /> */}
                 <MenuItem onClick={handleClose}>
                     <ListItemIcon>
                         <Settings fontSize="small" />

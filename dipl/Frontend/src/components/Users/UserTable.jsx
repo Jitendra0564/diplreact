@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import MUIDataTable from "mui-datatables";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from 'axios';
+import { motion } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
 
 const getMuiTheme = () =>
@@ -42,6 +43,7 @@ const UserTable = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
 
     const columns = [
         { name: "id", label: "S.No:" },
@@ -56,12 +58,15 @@ const UserTable = () => {
                     const userId = users[rowId]._id;
 
                     return (
-                        <button
+                        <motion.button
                             onClick={() => navigate(`/UserProfile/${userId}`)} // Navigate to /UserProfile/{userId}
-                            className="bg-rose-400 py-1 px-3 rounded-md font-regular"
+                            className="bg-blue-100 py-1 px-3 rounded-md font-regular"
+                            whileHover={{ scale: 1.05 }} // Scale up by 5% on hover
+                            whileTap={{ scale: 0.95 }} // Scale down by 5% on tap
+                            transition={{ type: "spring", stiffness: 300, damping: 10 }}
                         >
                             View Profile
-                        </button>
+                        </motion.button>
                     );
                 }
             }
@@ -76,7 +81,7 @@ const UserTable = () => {
         const token = localStorage.getItem('token'); 
 
         try {
-            const response = await axios.get('http://localhost:5000/api/users/users', {
+            const response = await axios.get(`${baseURL}/users/users`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }

@@ -7,9 +7,10 @@ const TaskCard = () => {
     const [completedTasks, setCompletedTasks] = useState([]);
     const [pendingTasks, setPendingTasks] = useState([]);
     const [expiredTasks, setExpiredTasks] = useState([]);
+    const [TaskAssign, setTaskAssign] = useState([]);
     const [InProgressTasks, setInProgress] = useState([]);
     const [visibleTaskList, setVisibleTaskList] = useState(null); // Track the currently visible task list
-
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
     // Function to get the value of a cookie by name
     const getCookieValue = (name) => {
         const value = `; ${document.cookie}`;
@@ -19,11 +20,12 @@ const TaskCard = () => {
 
     const isAdmin = getCookieValue('isAdmin') === 'true';
     const token = getCookieValue('token');
+    const currentUser = getCookieValue("currentUser");
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/tasks', {
+                const response = await axios.get(`${baseURL}/tasks`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -34,6 +36,13 @@ const TaskCard = () => {
                 setPendingTasks(allTasks.filter((task) => task.status === 'Pending'));
                 setExpiredTasks(allTasks.filter((task) => task.status === 'Cancelled'));
                 setInProgress(allTasks.filter((task) => task.status === 'In Progress'));
+                setTaskAssign(
+                    allTasks.filter(
+                      (task) =>
+                        task.createdBy.name === currentUser &&
+                        currentUser !== task.assignedTo.name
+                    )
+                  );
             } catch (error) {
                 console.error('Error fetching tasks:', error);
             }
@@ -105,12 +114,12 @@ const TaskCard = () => {
                                 </div>
                             </div>
                         </div>
-                        <Button
+                        <button
                             className="w-full text-purple-600 bg-purple-100 hover:bg-purple-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
                             onClick={() => toggleTaskList('total')}
                         >
                             View List
-                        </Button>
+                        </button>
                     </div>
 
                     {/* Card 2 */}
@@ -153,12 +162,12 @@ const TaskCard = () => {
                                 </div>
                             </div>
                         </div>
-                        <Button
-                            className="w-full text-green-600 bg-green-100 hover:bg-green-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
+                        <button
+                            className="w-full text-green-600 bg-green-300 hover:bg-green-400 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
                             onClick={() => toggleTaskList('Completed')}
                         >
                             View List
-                        </Button>
+                        </button>
                     </div>
 
                     {/* Card 3 */}
@@ -201,12 +210,12 @@ const TaskCard = () => {
                                 </div>
                             </div>
                         </div>
-                        <Button
+                        <button
                             className="w-full text-yellow-600 bg-yellow-100 hover:bg-yellow-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
                             onClick={() => toggleTaskList('Pending')}
                         >
                             View List
-                        </Button>
+                        </button>
                     </div>
 
                     {/* Card 4 */}
@@ -249,12 +258,12 @@ const TaskCard = () => {
                                 </div>
                             </div>
                         </div>
-                        <Button
+                        <button
                             className="w-full text-red-600 bg-red-100 hover:bg-red-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
                             onClick={() => toggleTaskList('Cancelled')}
                         >
                             View List
-                        </Button>
+                        </button>
                     </div>
                     {/* Card 5 */}
                     <div className="bg-white shadow-lg rounded-lg p-6 space-y-4">
@@ -296,12 +305,59 @@ const TaskCard = () => {
                                 </div>
                             </div>
                         </div>
-                        <Button
-                            className="w-full text-red-600 bg-red-100 hover:bg-red-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
+                        <button
+                            className="w-full text-green-900 bg-green-100 hover:bg-green-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
                             onClick={() => toggleTaskList('In Progress')}
                         >
                             View List
-                        </Button>
+                        </button>
+                    </div>
+                     {/* Card 6 */}
+                    <div className="bg-white shadow-lg rounded-lg p-6 space-y-4">
+                        <div className="flex items-center space-x-4">
+                            <div className="p-2 bg-orange-200 rounded-full">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-6 w-6 text-orange-600"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M17 20h5v-2a2 2 0 00-2-2h-3v4z"
+                                    />
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M4 15V7a2 2 0 012-2h10a2 2 0 012 2v8"
+                                    />
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M4 15v4a2 2 0 002 2h3v-4"
+                                    />
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M4 15h16"
+                                    />
+                                </svg>
+                            </div>
+                            <div>
+                                <div className="text-gray-600 text-sm">Tasks Assign By You</div>
+                                <div className="text-2xl  text-orange-700 font-semibold">
+                                    {TaskAssign.length}
+                                </div>
+                            </div>
+                        </div>
+                        <button
+                            className="w-full text-orange-600 bg-orange-100 hover:bg-orange-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
+                            onClick={() => toggleTaskList('TaskAssignBy')}
+                        >
+                            View List
+                        </button>
                     </div>
                 </div>
             </div>
@@ -329,11 +385,12 @@ const TaskCard = () => {
                     }}
                 >
                     <Typography id="task-list-modal-title" variant="h6" component="h2">
-                        {visibleTaskList === 'total' && 'Total Tasks'}
-                        {visibleTaskList === 'Completed' && 'Completed Tasks'}
-                        {visibleTaskList === 'Pending' && 'Pending Tasks'}
-                        {visibleTaskList === 'Cancelled' && 'Expired Tasks'}
-                        {visibleTaskList === 'In Progress' && 'In Progress Tasks'}
+                        {visibleTaskList === 'total' && 'Total Tasks:'}
+                        {visibleTaskList === 'Completed' && 'Completed Tasks:'}
+                        {visibleTaskList === 'Pending' && 'Pending Tasks:'}
+                        {visibleTaskList === 'Cancelled' && 'Expired Tasks:'}
+                        {visibleTaskList === 'In Progress' && 'In Progress Tasks:'}
+                        {visibleTaskList === 'TaskAssignBy' && 'Tasks Assign By You:'}
                     </Typography>
                     <div id="task-list-modal-description">
                         {visibleTaskList === 'total' && renderTaskTitles(totalTasks)}
@@ -341,6 +398,7 @@ const TaskCard = () => {
                         {visibleTaskList === 'Pending' && renderTaskTitles(pendingTasks)}
                         {visibleTaskList === 'Cancelled' && renderTaskTitles(expiredTasks)}
                         {visibleTaskList === 'In Progress' && renderTaskTitles(InProgressTasks)}
+                        {visibleTaskList === 'TaskAssignBy' && renderTaskTitles(TaskAssign)}
                     </div>
                     <Button onClick={closeModal} variant="contained" color="primary" sx={{ mt: 2 }}>
                         Close

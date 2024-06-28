@@ -39,7 +39,7 @@ const UserForm = ({ onBack }) => {
   });
 
   const [error, setError] = useState('');
-
+  const baseURL = import.meta.env.VITE_API_BASE_URL;
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -59,7 +59,7 @@ const UserForm = ({ onBack }) => {
 
   const checkUserExists = async (email) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/users?email=${email}`);
+      const response = await axios.get(`${baseURL}/users?email=${email}`);
       return response.data.exists;
     } catch (error) {
       console.error('Error checking user existence', error);
@@ -95,7 +95,7 @@ const UserForm = ({ onBack }) => {
 
   
     try {
-      const response = await axios.post('http://localhost:5000/api/users', form, {
+      const response = await axios.post('${baseURL}/users', form, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

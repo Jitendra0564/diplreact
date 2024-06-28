@@ -8,12 +8,13 @@ const AssignTaskForm = ({ onBack }) => {
     const navigate = useNavigate();
     const [users, setUsers] = useState([]);
     const [showSuccessAlert, setShowSuccessAlert] = useState(false);
-
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
     useEffect(() => {
         // Fetch employee data from the backend
         const fetchUsers = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/users');
+                const response = await axios.get(`${baseURL}/users`);
+
                 setUsers(response.data);
             } catch (error) {
                 console.error('Error fetching users:', error);

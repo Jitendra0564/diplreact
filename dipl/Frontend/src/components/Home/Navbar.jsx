@@ -14,7 +14,7 @@ const Navbar = () => {
                     </div>
                     <div className="flex space-x-4 items-center">
 
-                        <NavLink to="/login" activeStyle>
+                        <NavLink to="/login" >
                             <p className='text-xl lg:text-xl  text-white cursor-pointer'>LOGIN</p>
                         </NavLink>
 

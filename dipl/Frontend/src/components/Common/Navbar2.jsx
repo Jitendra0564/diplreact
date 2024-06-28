@@ -18,7 +18,7 @@ const Navbar2 = ({ isCompaniesPage, isTaskPage, isUserPage, isToolsPage, onSelec
         <nav className="h-16 flex flex-col text-center content-center sm:flex-row sm:text-left sm:justify-between py-2 px-6  border-b rtl:border-l rtl:border-b-0 dark:bg-gray-100 dark:border-gray-300 shadow sm:items-baseline w-full">
             <div className="mb-2 sm:mb-0 inner">
             </div>
-            <div class="sm:mb-0 self-center">
+            <div className="sm:mb-0 self-center">
                 {isCompaniesPage && (
                     <>
                         <div className='flex items-center justify-center'>
