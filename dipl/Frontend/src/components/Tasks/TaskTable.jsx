@@ -265,7 +265,7 @@ const TaskTable = () => {
         
 
         try {
-            const response = await axios.put(`http://localhost:5000/api/tasks/${selectedTask._id}`, {
+            const response = await axios.put(`${baseURL}/tasks/${selectedTask._id}`, {
                 title: updatedTask.title,
                 description: updatedTask.description,
                 status: updatedTask.status,
@@ -321,7 +321,7 @@ const TaskTable = () => {
         if (!selectedTask) return;
 
         try {
-            await axios.delete(`http://localhost:5000/api/tasks/${selectedTask._id}`);
+            await axios.delete(`${baseURL}/tasks/${selectedTask._id}`);
 
             const updatedTasks = tasks.filter(task => task._id !== selectedTask._id);
             setTasks(updatedTasks);
@@ -359,7 +359,7 @@ const TaskTable = () => {
         if (!selectedTask || !newScheduledDate) return;
 
         try {
-            const response = await axios.post(`http://localhost:5000/api/tasks/${selectedTask._id}/schedule`, {
+            const response = await axios.post(`${baseURL}/tasks/${selectedTask._id}/schedule`, {
                 eventDate: newScheduledDate,
             });
 
@@ -396,7 +396,7 @@ const TaskTable = () => {
         if (!selectedTask || !newRescheduledDate || !rescheduleRemarks) return;
       
         try {
-          const response = await axios.put(`http://localhost:5000/api/tasks/${selectedTask._id}/reschedule`, {
+          const response = await axios.put(`${baseURL}/tasks/${selectedTask._id}/reschedule`, {
             rescheduledDate: newRescheduledDate, // Ensure the field name is `rescheduledDate`
             remarks: rescheduleRemarks,
           });
@@ -425,7 +425,7 @@ const TaskTable = () => {
     const handleOpenHistoryDialog = async (task) => {
         setSelectedTask(task);
         try {
-            const response = await axios.get(`http://localhost:5000/api/tasks/${task._id}/history`);
+            const response = await axios.get(`${baseURL}/tasks/${task._id}/history`);
             setTaskHistory(response.data);
             setHistoryDialogOpen(true);
         } catch (error) {

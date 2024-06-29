@@ -44,7 +44,7 @@ const AssignTaskForm = ({ onBack }) => {
 
     const onSubmit = async (values, { resetForm, setSubmitting }) => {
         try {
-            const response = await axios.post('http://localhost:5000/api/tasks/', values);
+            const response = await axios.post(`${baseURL}/tasks/`, values);
             //console.log('Task created successfully:', response.data);
             alert('Task assigned successfully!');
             resetForm();
