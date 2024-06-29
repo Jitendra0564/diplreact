@@ -92,7 +92,7 @@ export const AuthProvider = ({ children }) => {
           loading: false
         });
         if (!location.pathname.startsWith('/login')) {
-          navigate('/home', { replace: true });
+          navigate('/login', { replace: true });
         }
       }
     };
