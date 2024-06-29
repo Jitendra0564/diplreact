@@ -16,6 +16,8 @@ app.use(cors({
   credentials: true, // Allow credentials (cookies, authorization headers)
 }));
 
+
+
 // Import routes
 const userRoutes = require('./src/routes/usersroutes');
 const taskRoutes = require('./src/routes/taskroutes');
@@ -23,6 +25,11 @@ const companyRoutes = require('./src/routes/companiesroutes');
 
 // Public routes
 app.use('/api/users', userRoutes);
+app.use(
+  "/health-check",
+  (req , res) =>
+    res.status(200).send("Health is ok")
+);
 
 // Protected routes
 app.use('/api/tasks', authenticateToken, taskRoutes);
