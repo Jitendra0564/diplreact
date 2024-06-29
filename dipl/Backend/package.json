@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js",
+   "start": "node dist/app.js",
     "test": "cross-env NODE_ENV=test jest",
     "build": "babel src -d dist"
   },
