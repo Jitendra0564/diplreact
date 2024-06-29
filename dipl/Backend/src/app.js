@@ -19,9 +19,9 @@ app.use(cors({
 
 
 // Import routes
-const userRoutes = require('./src/routes/usersroutes');
-const taskRoutes = require('./src/routes/taskroutes');
-const companyRoutes = require('./src/routes/companiesroutes');
+const userRoutes = require('./routes/usersroutes');
+const taskRoutes = require('./routes/taskroutes');
+const companyRoutes = require('./routes/companiesroutes');
 
 // Public routes
 app.use('/api/users', userRoutes);

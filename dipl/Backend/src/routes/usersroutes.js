@@ -4,7 +4,7 @@ const multer = require('multer');
 const mongoose = require('mongoose');
 const mongodb = require('mongodb');
 const Grid = require('gridfs-stream');
-const { authenticateToken } = require('../../middleware');
+const { authenticateToken } = require('../middleware');
 const User = require('../models/UsersModels');
 const File = require('../models/fileupload');
 const {

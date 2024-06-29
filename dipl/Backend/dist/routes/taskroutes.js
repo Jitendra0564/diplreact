@@ -2,7 +2,7 @@
 
 var express = require('express');
 var router = express.Router();
-var _require = require('../../middleware'),
+var _require = require('../middleware'),
   authenticateToken = _require.authenticateToken;
 var _require2 = require('../controllers/taskcontroller'),
   getAllTasks = _require2.getAllTasks,

@@ -5,175 +5,102 @@ function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyri
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 var express = require('express');
-var router = express.Router();
-var multer = require('multer');
 var mongoose = require('mongoose');
-var mongodb = require('mongodb');
-var Grid = require('gridfs-stream');
-var _require = require('../middleware'),
+var dotenv = require('dotenv');
+var cors = require('cors');
+var _require = require('./middleware'),
   authenticateToken = _require.authenticateToken;
-var User = require('../models/UsersModels');
-var File = require('../models/fileupload');
-var _require2 = require('../controllers/usercontoller'),
-  registerUser = _require2.registerUser,
-  loginUser = _require2.loginUser,
-  createUser = _require2.createUser,
-  getUserById = _require2.getUserById,
-  updateUser = _require2.updateUser,
-  deleteUser = _require2.deleteUser,
-  getUsers = _require2.getUsers,
-  getAllUsers = _require2.getAllUsers;
+dotenv.config();
+require('dotenv').config();
+var app = express();
 
-// Multer storage configuration
-var storage = multer.memoryStorage();
-var fileFilter = function fileFilter(req, file, cb) {
-  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'application/pdf' || file.mimetype === 'image/jpg') {
-    cb(null, true);
-  } else {
-    cb(new Error('Invalid file type'), false);
-  }
-};
-var upload = multer({
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB file size limit
-  }
-});
+// Middleware
+app.use(express.json());
+// CORS configuration
+app.use(cors({
+  origin: 'http://localhost:5173',
+  // Allow requests from this origin
+  credentials: true // Allow credentials (cookies, authorization headers)
+}));
+
+// Import routes
+var userRoutes = require('./routes/usersroutes');
+var taskRoutes = require('./routes/taskroutes');
+var companyRoutes = require('./routes/companiesroutes');
 
 // Public routes
-router.post('/register', upload.fields([{
-  name: 'pancard'
-}, {
-  name: 'resume'
-}, {
-  name: 'photo'
-}, {
-  name: 'idProof'
-}]), registerUser);
-router.post('/login', loginUser);
-
-// Middleware to check for admin role
-var isAdmin = function isAdmin(req, res, next) {
-  if (req.user && req.user.isAdmin) {
-    next();
-  } else {
-    return res.status(403).json({
-      msg: 'Access denied. Admin role required.'
-    });
-  }
-};
+app.use('/api/users', userRoutes);
+app.use("/health-check", function (req, res) {
+  return res.status(200).send("Health is ok");
+});
 
 // Protected routes
-router.use(authenticateToken);
+app.use('/api/tasks', authenticateToken, taskRoutes);
+app.use('/api/companies', authenticateToken, companyRoutes);
+app.use('/api/users', authenticateToken, userRoutes);
 
-// Route to get users with only 3 fields
-router.get('/users', authenticateToken, getUsers);
-
-// Create a new user (requires admin role)
-router.post('/', isAdmin, upload.fields([{
-  name: 'pancard',
-  maxCount: 1
-}, {
-  name: 'resume',
-  maxCount: 1
-}, {
-  name: 'photo',
-  maxCount: 1
-}, {
-  name: 'idProof',
-  maxCount: 1
-}]), createUser);
-
-// Get a user by ID (requires admin role)
-router.get('/:id', authenticateToken, getUserById);
-router.get('/:id/files', authenticateToken, /*#__PURE__*/function () {
+// Route to serve uploaded files
+app.get('/api/users/files/:fileId', authenticateToken, /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(req, res) {
-    var user;
+    var file;
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) switch (_context.prev = _context.next) {
         case 0:
           _context.prev = 0;
           _context.next = 3;
-          return User.findById(req.params.id).populate('files');
+          return File.findById(req.params.fileId);
         case 3:
-          user = _context.sent;
-          res.json({
-            files: user.files
-          });
-          _context.next = 10;
+          file = _context.sent;
+          if (file) {
+            _context.next = 6;
+            break;
+          }
+          return _context.abrupt("return", res.status(404).json({
+            error: 'File not found'
+          }));
+        case 6:
+          res.contentType(file.fileCategory);
+          bucket.openDownloadStream(file._id).pipe(res);
+          _context.next = 13;
           break;
-        case 7:
-          _context.prev = 7;
+        case 10:
+          _context.prev = 10;
           _context.t0 = _context["catch"](0);
           res.status(500).json({
             error: 'Server error'
           });
-        case 10:
+        case 13:
         case "end":
           return _context.stop();
       }
-    }, _callee, null, [[0, 7]]);
+    }, _callee, null, [[0, 10]]);
   }));
   return function (_x, _x2) {
     return _ref.apply(this, arguments);
   };
 }());
-router.get('/:id/files/:fileId', authenticateToken, /*#__PURE__*/function () {
-  var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(req, res) {
-    var fileId, db, bucket, file, downloadStream;
-    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-      while (1) switch (_context2.prev = _context2.next) {
-        case 0:
-          _context2.prev = 0;
-          fileId = new mongoose.Types.ObjectId(req.params.fileId);
-          db = mongoose.connection.db;
-          bucket = new mongodb.GridFSBucket(db, {
-            bucketName: 'uploads'
-          });
-          _context2.next = 6;
-          return bucket.find({
-            _id: fileId
-          }).next();
-        case 6:
-          file = _context2.sent;
-          if (file) {
-            _context2.next = 9;
-            break;
-          }
-          return _context2.abrupt("return", res.status(404).json({
-            error: 'File not found'
-          }));
-        case 9:
-          res.set('Content-Type', file.metadata.fileType);
-          res.set('Content-Disposition', "attachment; filename=\"".concat(file.filename, "\""));
-          downloadStream = bucket.openDownloadStream(fileId);
-          downloadStream.pipe(res);
-          _context2.next = 19;
-          break;
-        case 15:
-          _context2.prev = 15;
-          _context2.t0 = _context2["catch"](0);
-          console.error('Error fetching file:', _context2.t0);
-          res.status(500).json({
-            error: 'Server error'
-          });
-        case 19:
-        case "end":
-          return _context2.stop();
-      }
-    }, _callee2, null, [[0, 15]]);
-  }));
-  return function (_x3, _x4) {
-    return _ref2.apply(this, arguments);
-  };
-}());
-// Route to get all users with all fields
-router.get('/', authenticateToken, getAllUsers);
 
-// Update a user (requires admin role)
-router.put('/:id', isAdmin, updateUser);
+// Error handling middleware
+app.use(function (err, req, res, next) {
+  console.error(err.stack);
+  res.status(500).json({
+    error: 'Something went wrong'
+  });
+});
 
-// Delete a user (requires admin role)
-router["delete"]('/:id', isAdmin, deleteUser);
-module.exports = router;
+// MongoDB connection
+mongoose.connect(process.env.MONGODB_URI, {
+  //useNewUrlParser: true,
+  //useUnifiedTopology: true,
+}).then(function () {
+  return console.log('MongoDB connected');
+})["catch"](function (err) {
+  return console.log(err);
+});
+if (process.env.NODE_ENV !== 'test') {
+  var PORT = process.env.PORT || 5000;
+  app.listen(PORT, function () {
+    return console.log("Server started on port ".concat(PORT));
+  });
+}
+module.exports = app;
