@@ -91,7 +91,7 @@ export const AuthProvider = ({ children }) => {
           user: null,
           loading: false
         });
-        if (!location.pathname.startsWith('/login')) {
+        if (!location.pathname.startsWith('/')) {
           navigate('/login', { replace: true });
         }
       }
