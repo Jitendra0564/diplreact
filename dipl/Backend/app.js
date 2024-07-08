@@ -1,15 +1,16 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const cors = require('cors');
-const { authenticateToken } = require('./middleware');
+import express, { json } from 'express';
+import { connect } from 'mongoose';
+import dotenv from 'dotenv';
+import cors from 'cors';
+//import { authenticateToken } from './src/middleware';
+import { authenticateToken } from './src/middleware.js';
+
 
 dotenv.config();
-require('dotenv').config();
 const app = express();
 
 // Middleware
-app.use(express.json());
+app.use(json());
 // CORS configuration
 app.use(cors({
   origin: 'http://localhost:5173', // Allow requests from this origin
@@ -19,16 +20,18 @@ app.use(cors({
 
 
 // Import routes
-const userRoutes = require('./routes/usersroutes');
-const taskRoutes = require('./routes/taskroutes');
-const companyRoutes = require('./routes/companiesroutes');
+import userRoutes from './src/routes/usersroutes.js';
+import taskRoutes from './src/routes/taskroutes.js';
+import companyRoutes from './src/routes/companiesroutes.js';
 
 // Public routes
 app.use('/api/users', userRoutes);
 app.use(
   "/health-check",
   (req , res) =>
+    {console.log("------------>>>>>>")
     res.status(200).send("Health is ok")
+    }
 );
 
 // Protected routes
@@ -59,8 +62,7 @@ app.use((err, req, res, next) => {
 });
 
 // MongoDB connection
-mongoose
-  .connect(process.env.MONGODB_URI, {
+connect(process.env.MONGODB_URI, {
     //useNewUrlParser: true,
     //useUnifiedTopology: true,
   })
@@ -71,4 +73,4 @@ mongoose
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
   }
-  module.exports = app;
+  export default app;

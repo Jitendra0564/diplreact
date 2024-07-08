@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const companySchema = new mongoose.Schema({
+import { Schema, model } from 'mongoose';
+const companySchema = new Schema({
     image: { type: String },
     name: { type: String, required: true },
     owner: { type: String, required: true },
@@ -48,4 +48,4 @@ const companySchema = new mongoose.Schema({
     },
   });
   
-  module.exports = mongoose.model('Company', companySchema);
+  export default model('Company', companySchema);

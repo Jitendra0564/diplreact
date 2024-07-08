@@ -1,23 +1,17 @@
-const express = require('express');
-const router = express.Router();
-const { authenticateToken } = require('../middleware');
-const {
-  getAllTasks,
-  getTaskById,
-  createTask,
-  updateTask,
-  deleteTask,
-  scheduleTask,
-  rescheduleTask,
-  getTaskHistory,
-
-} = require('../controllers/taskcontroller');
+import { Router } from 'express';
+const router = Router();
+import { authenticateToken } from '../middleware.js';
+import { getAllTasks, getTaskById, createTask, updateTask, deleteTask, scheduleTask, rescheduleTask, getTaskHistory, RequestReschedule,
+    RejectRequest,getNotifications } from '../controllers/taskcontroller.js';
 
 // Apply authenticateToken middleware to all task routes
-router.use(authenticateToken);
+//router.use(authenticateToken);
 
 // Get all tasks (requires authentication)
 router.get('/',authenticateToken, getAllTasks);
+
+// Get Notifications
+router.get('/notifications', authenticateToken, getNotifications);
 
 // Get particular task by ID (requires authentication)
 router.get('/:id',authenticateToken, getTaskById);
@@ -40,4 +34,12 @@ router.put('/:id/reschedule', rescheduleTask);
 // Get task history (requires authentication)
 router.get('/:id/history', getTaskHistory);
 
-module.exports = router;
+// Request reschedule
+router.post('/:taskId/request-reschedule',RequestReschedule);
+
+// Reject reschedule request
+router.post('/:taskId/reject-reschedule',RejectRequest);
+
+
+
+export default router;

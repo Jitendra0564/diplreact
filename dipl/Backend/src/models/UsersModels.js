@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
-const UserSchema = new mongoose.Schema({
+const UserSchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -61,11 +61,11 @@ const UserSchema = new mongoose.Schema({
     enum: ['Active', 'InActive'],
     default: 'Active',
   },
-  files: [{ type: mongoose.Schema.Types.ObjectId, ref: 'uploads.files' }],
+  files: [{ type: Schema.Types.ObjectId, ref: 'uploads.files' }],
   
 });
 
-module.exports = mongoose.model('User', UserSchema);
+export default model('User', UserSchema);
 
 
 

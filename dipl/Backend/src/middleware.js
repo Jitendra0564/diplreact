@@ -1,7 +1,9 @@
-const jwt = require('jsonwebtoken');
+import pkg from 'jsonwebtoken';
+const { verify } = pkg;
 
 // Middleware to authenticate token
-exports.authenticateToken = (req, res, next) => {
+export function authenticateToken(req, res, next) {
+  //console.log("in middleware");
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
@@ -10,16 +12,17 @@ exports.authenticateToken = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = verify(token, process.env.JWT_SECRET);
     req.user = decoded.user;
+    //console.log("for NExt");
     next();
   } catch (err) {
     return res.status(403).json({ msg: 'Invalid token' });
   }
-};
+}
 
 // Error handling middleware
-exports.errorHandler = (err, req, res, next) => {
+export function errorHandler(err, req, res, next) {
   console.error(err.stack);
   res.status(500).json({ error: 'Something went wrong' });
-};
+}

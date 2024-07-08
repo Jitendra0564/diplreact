@@ -1,21 +1,22 @@
-const mongoose = require('mongoose');
+import pkg from 'mongoose';
+const { Schema, mongo, connection, model } = pkg;
 
-const fileSchema = new mongoose.Schema({
+const fileSchema = new Schema({
   filename: String,
   fileType: String,
   length: Number,
   chunkSize: Number,
   uploadDate: { type: Date, default: Date.now },
   metadata: Object,
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  userId: { type: Schema.Types.ObjectId, ref: 'User' },
   fileCategory: { type: String, enum: ['pancard','resume', 'photo', 'idProof', ] },
 });
 
-const GridFSBucket = mongoose.mongo.GridFSBucket;
+const GridFSBucket = mongo.GridFSBucket;
 let bucket;
 
-mongoose.connection.on('connected', () => {
-  const db = mongoose.connection.db;
+connection.on('connected', () => {
+  const db = connection.db;
   bucket = new GridFSBucket(db, { bucketName: 'uploads' });
 });
 
@@ -38,4 +39,4 @@ fileSchema.statics.uploadFile = async function (file, userId, fileCategory) {
   return uploadStream.id;
 };
 
-module.exports = mongoose.model('uploads.files', fileSchema);
+export default model('uploads.files', fileSchema);

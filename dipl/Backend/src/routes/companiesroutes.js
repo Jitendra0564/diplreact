@@ -1,20 +1,20 @@
-const express = require('express');
-const router = express.Router();
-const companyController = require('../controllers/companyController');
+import { Router } from 'express';
+const router = Router();
+import { getAllCompanies, getCompanyById, createCompany, updateCompany, deleteCompany } from '../controllers/companyController.js';
 
 // Get all companies
-router.get('/', companyController.getAllCompanies);
+router.get('/', getAllCompanies);
 
 // Get a company by ID
-router.get('/:id', companyController.getCompanyById);
+router.get('/:id', getCompanyById);
 
 // Create a new company
-router.post('/', companyController.createCompany);
+router.post('/', createCompany);
 
 // Update a company
-router.put('/:id', companyController.updateCompany);
+router.put('/:id', updateCompany);
 
 // Delete a company
-router.delete('/:id', companyController.deleteCompany);
+router.delete('/:id', deleteCompany);
 
-module.exports = router;
+export default router;

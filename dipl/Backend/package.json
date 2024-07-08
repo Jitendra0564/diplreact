@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-   "start": "node dist/app.js",
+   "start": "node app.js",
     "test": "cross-env NODE_ENV=test jest",
     "build": "babel src -d dist"
+    
   },
   "author": "jitendra05644@gmail.com",
   "license": "ISC",

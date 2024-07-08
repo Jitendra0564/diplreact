@@ -1,25 +1,18 @@
-const express = require('express');
-const router = express.Router();
-const multer = require('multer');
-const mongoose = require('mongoose');
-const mongodb = require('mongodb');
-const Grid = require('gridfs-stream');
-const { authenticateToken } = require('../middleware');
-const User = require('../models/UsersModels');
-const File = require('../models/fileupload');
-const {
-  registerUser,
-  loginUser,
-  createUser,
-  getUserById,
-  updateUser,
-  deleteUser,
-  getUsers,
-  getAllUsers,
-} = require('../controllers/usercontoller');
+import { Router } from 'express';
+const router = Router();
+import multer, { memoryStorage } from 'multer';
+import pkg from 'mongoose';
+const { Types, connection } = pkg;
+import { GridFSBucket } from 'mongodb';
+import Grid from 'gridfs-stream';
+import { authenticateToken } from '../middleware.js';
+//import { findById } from '../models/UsersModels.js';
+import User from '../models/UsersModels.js';
+import File from '../models/fileupload.js';
+import { registerUser, loginUser, createUser, getUserById, updateUser, deleteUser, getUsers, getAllUsers } from '../controllers/usercontoller.js';
 
 // Multer storage configuration
-const storage = multer.memoryStorage();
+const storage = memoryStorage();
 const fileFilter = (req, file, cb) => {
   if (
     file.mimetype === 'image/jpeg' ||
@@ -81,9 +74,9 @@ router.get('/:id/files',authenticateToken, async (req, res) => {
 
 router.get('/:id/files/:fileId', authenticateToken, async (req, res) => {
   try {
-    const fileId = new mongoose.Types.ObjectId(req.params.fileId);
-    const db = mongoose.connection.db;
-    const bucket = new mongodb.GridFSBucket(db, {
+    const fileId = new Types.ObjectId(req.params.fileId);
+    const db = connection.db;
+    const bucket = new GridFSBucket(db, {
       bucketName: 'uploads',
     });
 
@@ -112,4 +105,4 @@ router.put('/:id', isAdmin, updateUser);
 // Delete a user (requires admin role)
 router.delete('/:id', isAdmin, deleteUser);
 
-module.exports = router;
+export default router;

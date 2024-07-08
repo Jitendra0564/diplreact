@@ -1,18 +1,21 @@
-const bcrypt = require('bcryptjs');
-const path = require('path');
-const multer = require('multer');
-const jwt = require('jsonwebtoken');
-const File = require('../models/fileupload');
-const User = require('../models/UsersModels');
+import pkg from 'bcryptjs';
+const { genSalt, hash, compare } = pkg;
+import { extname } from 'path';
+import multer, { diskStorage } from 'multer';
+import pkgg from 'jsonwebtoken';
+const { sign } = pkgg;
+import File from '../models/fileupload.js';
+//import User, { findOne, findById, find, deleteOne } from '../models/UsersModels.js';
+import User from '../models/UsersModels.js';
 
 // Configure multer for file uploads
-const storage = multer.diskStorage({
+const storage = diskStorage({
   destination: (req, File, cb) => {
     cb(null, 'uploads/'); // Specify the upload directory
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    cb(null, file.fieldname + '-' + uniqueSuffix + extname(file.originalname));
   }
 });
 
@@ -33,19 +36,19 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({ storage, fileFilter });
 
 // User registration controller
-exports.registerUser = async (req, res) => {
+export async function registerUser(req, res) {
   try {
     const { name, email, dob, password,  fatherName, isAdmin, motherName, contactNo, AlternativeNo, fatherNo, Address, BankName, BankAccNo, Ifsc, Department, Position, Role, AadharCardNo, PanCardNo, joiningdate, Education, workHistory, Language, Status } = req.body;
 
     // Check if the user already exists
-    const userExists = await User.findOne({ email });
+    const userExists = await findOne({ email });
     if (userExists) {
       return res.status(400).json({ msg: 'User with this email already exists' });
     }
 
     // Hash the password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const salt = await genSalt(10);
+    const hashedPassword = await hash(password, salt);
 
     // Create a user
     const newUser = new User({
@@ -84,10 +87,10 @@ exports.registerUser = async (req, res) => {
     console.error(err.message);
     res.status(500).send('Server error');
   }
-};
+}
 
 // User login controller
-exports.loginUser = async (req, res) => {
+export async function loginUser(req, res) {
   try {
     const { email, password } = req.body;
 
@@ -98,7 +101,7 @@ exports.loginUser = async (req, res) => {
     }
 
     // Check if the password is correct
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
@@ -113,7 +116,7 @@ exports.loginUser = async (req, res) => {
       },
     };
 
-    jwt.sign(
+    sign(
       payload,
       process.env.JWT_SECRET,
       { expiresIn: '2d' },
@@ -132,10 +135,10 @@ exports.loginUser = async (req, res) => {
     console.error(err.message);
     res.status(500).send('Server error');
   }
-};
+}
 
 // Create a new user
-exports.createUser = async (req, res) => {
+export async function createUser(req, res) {
   try {
       const {
           name,
@@ -176,8 +179,8 @@ exports.createUser = async (req, res) => {
       }
 
       // Hash the password
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
+      const salt = await genSalt(10);
+      const hashedPassword = await hash(password, salt);
 
       // Create a new user object
       const newUser = new User({
@@ -229,11 +232,11 @@ exports.createUser = async (req, res) => {
   } catch (err) {
       res.status(500).json({ error: 'Server error' });
   }
-};
+}
 
 
 // Get all users with All fields
-exports.getAllUsers = async (req, res) => {
+export async function getAllUsers(req, res) {
   try {
     const users = await User.find();
     res.json(users);
@@ -241,11 +244,11 @@ exports.getAllUsers = async (req, res) => {
     console.error(err.message);
     res.status(500).send('Server error');
   }
-};
+}
 
 
 // Get a user by ID
-exports.getUserById = async (req, res) => {
+export async function getUserById(req, res) {
   try {
     const userId = req.params.id;
     const authenticatedUserId = req.user.id;
@@ -269,10 +272,10 @@ exports.getUserById = async (req, res) => {
     console.error(err.message);
     res.status(500).send('Server error');
   }
-};
+}
 
 // Get all users with only 3 fields
-exports.getUsers = async (req, res) => {
+export async function getUsers(req, res) {
   try {
     let users;
 
@@ -288,11 +291,11 @@ exports.getUsers = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-};
+}
 
 
 // Update a user
-exports.updateUser = async (req, res) => {
+export async function updateUser(req, res) {
   try {
     const {
       name,
@@ -349,8 +352,8 @@ exports.updateUser = async (req, res) => {
 
     // Update the password if provided
     if (password) {
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
+      const salt = await genSalt(10);
+      const hashedPassword = await hash(password, salt);
       user.password = hashedPassword;
     }
 
@@ -361,9 +364,9 @@ exports.updateUser = async (req, res) => {
     console.error(err.message);
     res.status(500).send('Server error');
   }
-};
+}
 
-exports.deleteUser = async (req, res) => {
+export async function deleteUser(req, res) {
   try {
     const userId = req.params.id;
 
@@ -384,4 +387,4 @@ exports.deleteUser = async (req, res) => {
     console.error(err.message);
     res.status(500).send('Server error');
   }
-};
+}

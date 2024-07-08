@@ -1,13 +1,16 @@
-const Task = require('../models/TaskModels');
+//import Task, { findById, find, findByIdAndUpdate, deleteOne } from '../models/TaskModels.js';
+import Task from '../models/TaskModels.js';
+import User from '../models/UsersModels.js';
+import Notification from '../models/notificationmodal.js';
 
 
 // Create a new task
-exports.createTask = async (req, res) => {
+export async function createTask(req, res) {
   try {
-    const { title, description, assignedTo,status} = req.body;
+    const { title, description, assignedTo, status, DueDate} = req.body;
     const createdBy = req.user.id;
     const assignDate = new Date();
-    const DueDate = new Date();
+    
 
     const newTask = new Task({
       title,
@@ -25,11 +28,12 @@ exports.createTask = async (req, res) => {
     console.error(err.message);
     res.status(500).send('Server error');
   }
-};
+}
 
 // Get Particular task
-exports.getTaskById = async (req, res) => {
+export async function getTaskById(req, res) {
   try {
+    console.log("in task id");
     const taskId = req.params.id;
     const authenticatedUserId = req.user.id;
     const isAdmin = req.user.isAdmin;
@@ -53,11 +57,11 @@ exports.getTaskById = async (req, res) => {
     console.error(err.message);
     res.status(500).send('Server error');
   }
-};
+}
 
 
 // Get all tasks
-exports.getAllTasks = async (req, res) => {
+export async function getAllTasks(req, res) {
   try {
     const authenticatedUserId = req.user.id;
     const isAdmin = req.user.isAdmin;
@@ -94,11 +98,11 @@ exports.getAllTasks = async (req, res) => {
     console.error(err.message);
     res.status(500).send('Server error');
   }
-};
+}
 
 
 // Update a task
-exports.updateTask = async (req, res) => {
+export async function updateTask(req, res) {
   try {
     const { title, description, status, assignDate, DueDate, assignedTo } = req.body;
     const taskId = req.params.id;
@@ -117,9 +121,17 @@ exports.updateTask = async (req, res) => {
     if (currentUser.isAdmin) {
       // Admins can update all fields
       updatedFields = { title, description, status, assignDate, DueDate, assignedTo };
-    } else if ((task.createdBy.toString() === currentUser.id) && (task.createdBy.toString() !== task.assignedTo.toString()) ){
+    } else if ((task.createdBy.toString() === currentUser.id)){
       // Regular users who assigned the task can update limited fields
       updatedFields = { title, description, DueDate,status };
+
+    } else if ((task.assignedTo.toString() === currentUser.id)){
+
+      if (['In Progress', 'Done', 'Pending'].includes(status)) {
+        updatedFields = { status };
+      } else {
+        return res.status(403).json({ msg: 'Access denied. You can only update the status to "In-Progress" or "Done".', color: 'red' });
+      }
     } else {
       return res.status(403).json({ msg: 'Access denied. You do not have permission to update this task.', color: 'red' });
     }
@@ -137,11 +149,11 @@ exports.updateTask = async (req, res) => {
     console.error(err.message);
     res.status(500).send('Server error');
   }
-};
+}
 
 
 // Schedule a task
-exports.scheduleTask = async (req, res) => {
+export async function scheduleTask(req, res) {
   try {
     const taskId = req.params.id;
     const { scheduledDate } = req.body;
@@ -172,45 +184,41 @@ exports.scheduleTask = async (req, res) => {
     console.error(err.message);
     res.status(500).send('Server error');
   }
-};
+}
 
 // Reschedule a task
-exports.rescheduleTask = async (req, res) => {
+export const rescheduleTask = async (req, res) => {
   try {
-    const taskId = req.params.id;
-    const { rescheduledDate, remarks } = req.body; // Ensure the field name is `rescheduledDate` instead of `eventDate`
-
-    // Find the task by ID
-    const task = await Task.findById(taskId);
-
-    // If the task is not found, return a 404 error
+    //console.log("user",req.user);
+    const { DueDate, remarks } = req.body;
+    const task = await Task.findById(req.params.id);
     if (!task) {
-      return res.status(404).json({ msg: 'Task not found' });
+      return res.status(404).json({ message: 'Task not found' });
     }
 
-    // Update the rescheduledDate and history
-    task.rescheduledDate = rescheduledDate;
-    task.scheduledStatus = 'Rescheduled';
+    task.DueDate = DueDate;
+    task.status = 'Pending';
+    task.rescheduleRequested = false;
     task.history.push({
       eventType: 'Rescheduled',
       eventDate: new Date(),
-      user: req.user.id,
-      remarks: `Rescheduled for ${rescheduledDate}, Remarks: ${remarks}`,
+      user: req.user.id, // Assuming you have user info in the request
+      remarks: `Scheduled for ${DueDate}`, remarks
     });
+    await task.save();
 
-    // Save the updated task
-    const updatedTask = await task.save();
+    // Remove the notification
+    await Notification.deleteOne({ task: task._id, type: 'reschedule_request' });
 
-    res.json(updatedTask);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(200).json({ message: 'Task rescheduled successfully', task });
+  } catch (error) {
+    res.status(500).json({ message: 'Error rescheduling task', error: error.message });
   }
 };
 
 
 // Get task history
-exports.getTaskHistory = async (req, res) => {
+export async function getTaskHistory(req, res) {
   try {
     const taskId = req.params.id;
 
@@ -227,10 +235,10 @@ exports.getTaskHistory = async (req, res) => {
     console.error(err.message);
     res.status(500).send('Server error');
   }
-};
+}
 
 // Delete a task
-exports.deleteTask = async (req, res) => {
+export async function deleteTask(req, res) {
   try {
     const taskId = req.params.id;
     const isAdmin = req.user.isAdmin;
@@ -253,6 +261,66 @@ exports.deleteTask = async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
+  }
+}
+
+
+export async function getNotifications(req, res) {
+  try {
+    //console.log("in Notification");
+    const notifications = await Notification.find({ recipient: req.user._id });
+    res.json(notifications);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching notifications', error: error.message });
+  }
+};
+
+//Request-Reschedule
+export const RequestReschedule = async (req, res) => {
+  try {
+    console.log("in Request",req.params);
+    const task = await Task.findById(req.params.taskId);
+    console.log(task);
+    if (!task) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+
+    task.rescheduleRequested = true;
+    await task.save();
+
+    // Create a notification for the task creator
+    const notification = new Notification({
+      type: 'reschedule_request',
+      message: `Reschedule requested for task: ${task.title}`,
+      task: task._id,
+      recipient: task.createdBy.toString()  // Set the recipient to the task creator
+    });
+    await notification.save();
+
+    res.status(200).json({ message: 'Reschedule request sent successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error requesting reschedule', error: error.message });
+  }
+};
+
+export const RejectRequest = async (req, res) => {
+  try {
+    console.log("in reject", req.params);
+    const task = await Task.findById(req.params.taskId);
+    console.log("Task response",task);
+    if (!task) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+
+    task.rescheduleRequested = false;
+    await task.save();
+
+    // Remove the notification
+    await Notification.deleteOne({ task: task._id, type: 'reschedule_request' });
+
+    res.status(200).json({ message: 'Reschedule request rejected' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error rejecting reschedule request', error: error.message });
   }
 };
 

@@ -168,7 +168,7 @@ const TaskTable = () => {
 
   const fetchNotifications = async () => {
     try {
-      const response = await axios.get(`${baseURL}/tasks/notifications`);
+      const response = await axios.get(`${baseURL}/notifications`);
       setNotifications(response.data);
     } catch (error) {
       console.error("Error fetching notifications:", error);
@@ -177,102 +177,37 @@ const TaskTable = () => {
 
   const handleOpenNotificationDialog = () => {
     setNotificationDialogOpen(true);
+    setAnchorEl(null);
   };
 
   const handleCloseNotificationDialog = () => {
     setNotificationDialogOpen(false);
   };
 
-  const handleApproveReschedule = async (notification) => {
-    try {
-      // Open the reschedule dialog with the notification details
-      handleRescheduleDialogOpen(notification);
-    } catch (error) {
-      console.error('Error approving reschedule request:', error);
+  const handleNotificationClick = (notification) => {
+    if (notification.type === "renewal_request") {
+      setSelectedTask(notification.task);
+      setOpenTaskUpdateDialog(true);
     }
-  };
-  
-  
-  const handleRejectReschedule = async (notification) => {
-    try {
-      console.log("In Reject Notification",notification);
-      await axios.post(`${baseURL}/tasks/${notification.task}/reject-reschedule`);
-      
-      fetchNotifications(); // Refresh notifications
-    } catch (error) {
-      console.error('Error rejecting reschedule request:', error);
-    }
+    handleCloseNotificationDialog();
   };
 
-  const handleRequestReschedule = async () => {
+  const handleRenewalRequest = async (task) => {
     try {
-      await axios.post(`${baseURL}/tasks/${selectedTask._id}/request-reschedule`);
-      setSnackbarMessage("Reschedule request sent successfully!");
-      setSnackbarOpen(true);
-      setSnackbarColor("blue");
-      handleMenuClose();
-    } catch (error) {
-      console.error("Error requesting reschedule:", error);
-      setSnackbarMessage("Failed to send reschedule request");
-      setSnackbarOpen(true);
-      setSnackbarColor("red");
-    }
-  };
-
-  const handleRescheduleDialogOpen = (notification) => {
-    setSelectedTask(notification.task);
-    setNewreScheduledDate(''); // Reset date
-    setRescheduleRemarks(''); // Reset remarks
-    setRescheduleDialogOpen(true);
-  };
-  
-
-  const handleRescheduleDialogClose = () => {
-    setRescheduleDialogOpen(false);
-  };
-  const handleRescheduleTask = async () => {
-    if (!selectedTask || !newRescheduledDate) return;
-  
-    try {
-      //console.log("Task Id",selectedTask);
-      const response = await axios.put(
-        `${baseURL}/tasks/${selectedTask}/reschedule`,
-        {
-          DueDate: newRescheduledDate,
-          remarks: rescheduleRemarks,
-        }
-      );
-  
-      const updatedTasks = tasks.map((task) => {
-        if (task._id === selectedTask._id) {
-          return {
-            ...task,
-            DueDate: formatDate(newRescheduledDate),
-            status: "Pending", // Reset status to Pending
-          };
-        }
-        return task;
+      await axios.post(`${baseURL}/tasks/${selectedTask._id}/request-renewal`, {
+        message: "Please renew this task.",
       });
-  
-      setTasks(updatedTasks);
-      setSnackbarMessage("Task rescheduled successfully!");
-      setSnackbarOpen(true);
+      setSnackbarMessage("Renewal request sent successfully");
       setSnackbarColor("green");
-      handleRescheduleDialogClose();
-  
-      // Remove the notification related to the rescheduled task
-      const updatedNotifications = notifications.filter(
-        (notification) => notification.task !== selectedTask._id
-      );
-      setNotifications(updatedNotifications);
-  
-      fetchData(); // Refresh the task list
-      fetchNotifications(); // Refresh notifications
+      setSnackbarOpen(true);
     } catch (error) {
-      console.error("Error rescheduling task:", error);
+      console.error("Error sending renewal request:", error);
+      setSnackbarMessage("Error sending renewal request");
+      setSnackbarColor("red");
+      setSnackbarOpen(true);
     }
   };
-  
+
   const handleOpenTaskForm = () => {
     setTaskFormOpen(true);
   };
@@ -280,6 +215,7 @@ const TaskTable = () => {
   const handleCloseTaskForm = () => {
     setTaskFormOpen(false);
   };
+
   const handleMenuOpen = (event, task) => {
     setAnchorEl(event.currentTarget);
     setSelectedTask(task);
@@ -288,7 +224,6 @@ const TaskTable = () => {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
-
 
   const handleViewTaskDetails = () => {
     setAnchorEl(null);
@@ -347,13 +282,6 @@ const TaskTable = () => {
     return `${year}-${month}-${day}`;
   };
 
-
-  const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
-  const statusOptions = ["Pending", "In Progress", "Completed", "Cancelled", "Done"];
-
-  
   const handleOpenTaskUpdateDialog = () => {
     setUpdatedTask({
       title: selectedTask.title,
@@ -379,51 +307,10 @@ const TaskTable = () => {
     }));
   };
 
-  const handleScheduleDialogOpen = () => {
-    if (!selectedTask || selectedTask.eventDate) {
-      setSnackbarMessage("Task has already been scheduled.");
-      setSnackbarOpen(true);
-      return;
-    }
-    setScheduleDialogOpen(true);
-    setAnchorEl(null);
-  };
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const handleScheduleDialogClose = () => {
-    setScheduleDialogOpen(false);
-  };
-
-  const handleScheduleTask = async () => {
-    if (!selectedTask || !newScheduledDate) return;
-
-    try {
-      const response = await axios.post(
-        `${baseURL}/tasks/${selectedTask._id}/schedule`,
-        {
-          eventDate: newScheduledDate,
-        }
-      );
-
-      const updatedTasks = tasks.map((task) => {
-        if (task._id === selectedTask._id) {
-          return {
-            ...task,
-            eventDate: formatDate(newScheduledDate),
-          };
-        }
-        return task;
-      });
-
-      setTasks(updatedTasks);
-      setSnackbarMessage("Task scheduled successfully!");
-      setSnackbarOpen(true);
-      setSnackbarColor("gray");
-      handleScheduleDialogClose();
-    } catch (error) {
-      console.error("Error scheduling task:", error);
-    }
-  };
-
+  const statusOptions = ["Pending", "In Progress", "Completed", "Cancelled", "Done"];
 
   const handleTaskUpdate = async () => {
     if (
@@ -516,7 +403,91 @@ const TaskTable = () => {
     }
   };
 
-  
+  const handleScheduleDialogOpen = () => {
+    if (!selectedTask || selectedTask.eventDate) {
+      setSnackbarMessage("Task has already been scheduled.");
+      setSnackbarOpen(true);
+      return;
+    }
+    setScheduleDialogOpen(true);
+    setAnchorEl(null);
+  };
+
+  const handleScheduleDialogClose = () => {
+    setScheduleDialogOpen(false);
+  };
+
+  const handleScheduleTask = async () => {
+    if (!selectedTask || !newScheduledDate) return;
+
+    try {
+      const response = await axios.post(
+        `${baseURL}/tasks/${selectedTask._id}/schedule`,
+        {
+          eventDate: newScheduledDate,
+        }
+      );
+
+      const updatedTasks = tasks.map((task) => {
+        if (task._id === selectedTask._id) {
+          return {
+            ...task,
+            eventDate: formatDate(newScheduledDate),
+          };
+        }
+        return task;
+      });
+
+      setTasks(updatedTasks);
+      setSnackbarMessage("Task scheduled successfully!");
+      setSnackbarOpen(true);
+      setSnackbarColor("gray");
+      handleScheduleDialogClose();
+    } catch (error) {
+      console.error("Error scheduling task:", error);
+    }
+  };
+
+  const handleRescheduleDialogOpen = () => {
+    setRescheduleDialogOpen(true);
+    setAnchorEl(null);
+  };
+
+  const handleRescheduleDialogClose = () => {
+    setRescheduleDialogOpen(false);
+  };
+
+  const handleRescheduleTask = async () => {
+    if (!selectedTask || !newRescheduledDate || !rescheduleRemarks) return;
+
+    try {
+      const response = await axios.put(
+        `${baseURL}/tasks/${selectedTask._id}/reschedule`,
+        {
+          rescheduledDate: newRescheduledDate, // Ensure the field name is `rescheduledDate`
+          remarks: rescheduleRemarks,
+        }
+      );
+
+      const updatedTasks = tasks.map((task) => {
+        if (task._id === selectedTask._id) {
+          return {
+            ...task,
+            rescheduledDate: formatDate(newRescheduledDate), // Assuming you have a function to format the date
+          };
+        }
+        return task;
+      });
+
+      setTasks(updatedTasks);
+      setSnackbarMessage("Task rescheduled successfully!");
+      setSnackbarOpen(true);
+      setSnackbarColor("purple");
+      handleRescheduleDialogClose();
+    } catch (error) {
+      console.error("Error rescheduling task:", error);
+    }
+  };
 
   const handleOpenHistoryDialog = async (task) => {
     setSelectedTask(task);
@@ -599,12 +570,12 @@ const TaskTable = () => {
                 }}
               >
                 {isExpired ? (
-                   <MenuItem onClick={handleRequestReschedule}>
-                   Reschedule Task
-                 </MenuItem>
+                  <MenuItem onClick={() => handleRenewalRequest(task)}>
+                    Request Renewal
+                  </MenuItem>
                 ) : (
                   <>
-                  <MenuItem onClick={handleViewTaskDetails}>
+                    <MenuItem onClick={handleViewTaskDetails}>
                       View Task
                     </MenuItem>
                     <MenuItem onClick={handleOpenTaskUpdateDialog}>
@@ -613,12 +584,14 @@ const TaskTable = () => {
                     <MenuItem onClick={handleDeleteConfirmationOpen}>
                       Delete Task
                     </MenuItem>
-                    
-                  {!task.eventDate && (
+                    {!task.eventDate && (
                       <MenuItem onClick={handleScheduleDialogOpen}>
                         Schedule Task
                       </MenuItem>
-                    )}              
+                    )}
+                    <MenuItem onClick={handleRescheduleDialogOpen}>
+                      Reschedule Task
+                    </MenuItem>
                     <MenuItem onClick={() => handleOpenHistoryDialog(task)}>
                       View History
                     </MenuItem>
@@ -681,7 +654,7 @@ const TaskTable = () => {
         padding={isSmallScreen ? "8px" : "16px"}
         flexDirection={isSmallScreen ? "column" : "row"}
       >
-         <motion.div
+        <motion.div
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           transition={{ type: "spring", stiffness: 300, damping: 10 }}
@@ -735,7 +708,6 @@ const TaskTable = () => {
               Filter Tomorrow
             </Button>
           </motion.div>
-
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -782,7 +754,7 @@ const TaskTable = () => {
       </Dialog>
 
       {/* Task Details Dialog */}
-     <Dialog
+      <Dialog
         open={openTaskDetailsDialog}
         onClose={handleCloseTaskDetailsDialog}
       >
@@ -819,7 +791,7 @@ const TaskTable = () => {
             Close
           </Button>
         </DialogActions>
-      </Dialog>  
+      </Dialog>
 
       {/* Task Update Dialog */}
       <Dialog open={openTaskUpdateDialog} onClose={handleCloseTaskUpdateDialog}>
@@ -906,6 +878,7 @@ const TaskTable = () => {
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
+
       <Dialog
         open={deleteConfirmationOpen}
         onClose={handleDeleteConfirmationClose}
@@ -954,7 +927,6 @@ const TaskTable = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
       {/* Reschedule Task Dialog */}
       <Dialog open={rescheduleDialogOpen} onClose={handleRescheduleDialogClose}>
         <DialogTitle>Reschedule Task</DialogTitle>
@@ -1021,40 +993,13 @@ const TaskTable = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Reschedule Task Dialog */}
-      <Dialog open={rescheduleDialogOpen} onClose={handleRescheduleDialogClose}>
-        <DialogTitle>Reschedule Task</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="New Scheduled Date"
-            type="date"
-            value={newRescheduledDate}
-            onChange={(e) => setNewreScheduledDate(e.target.value)}
-            fullWidth
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-          <TextField
-            label="Reschedule Remarks"
-            value={rescheduleRemarks}
-            onChange={(e) => setRescheduleRemarks(e.target.value)}
-            fullWidth
-            multiline
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleRescheduleDialogClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick ={handleRescheduleTask} color="primary">
-            Reschedule
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-     {/* View Notification Dialog */}
-     <Dialog open={notificationDialogOpen} onClose={handleCloseNotificationDialog}>
+      {/* View Notification Dialog */}
+      <Dialog
+        open={notificationDialogOpen}
+        onClose={handleCloseNotificationDialog}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogTitle>Notifications</DialogTitle>
         <DialogContent>
           {notifications && notifications.length > 0 ? (
@@ -1062,21 +1007,16 @@ const TaskTable = () => {
               {notifications.map((notification, index) => (
                 <li key={index}>
                   <Typography variant="body2">
-                    {notification.type === "reschedule_request"
-                      ? "Task Reschedule Request"
+                    {notification.type === "renewal_request"
+                      ? "Task Renewal Request"
                       : "Notification"}
                     : {notification.message}
                   </Typography>
-                  {notification.type === "reschedule_request" && (
-                    <DialogActions>
-                      <Button onClick={() =>  handleRescheduleDialogOpen(notification)} color="primary">
-                        Approve
-                      </Button>
-                      <Button onClick={() => handleRejectReschedule(notification)} color="secondary">
-                        Reject
-                      </Button>
-                    </DialogActions>
-                  )}
+                  <DialogActions>
+                    <Button onClick={() => handleNotificationClick(notification)} color="primary">
+                      View Task
+                    </Button>
+                  </DialogActions>
                 </li>
               ))}
             </ul>
@@ -1084,12 +1024,8 @@ const TaskTable = () => {
             <Typography variant="body2">No notifications available.</Typography>
           )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseNotificationDialog} color="primary">
-            Close
-          </Button>
-        </DialogActions>
       </Dialog>
+
       {/* Snackbar for showing deletion or scheduling message */}
       <Snackbar
         open={snackbarOpen}

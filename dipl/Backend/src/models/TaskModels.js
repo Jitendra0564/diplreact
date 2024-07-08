@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
-const taskSchema = new mongoose.Schema(
+const taskSchema = new Schema(
   {
     title: {
       type: String,
@@ -11,7 +11,7 @@ const taskSchema = new mongoose.Schema(
       required: true,
     },
     assignedTo: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
@@ -24,13 +24,13 @@ const taskSchema = new mongoose.Schema(
       required: true,
     },
     createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
     status: {
       type: String,
-      enum: ['Pending', 'In Progress', 'Completed', 'Cancelled'],
+      enum: ['Pending', 'In Progress', 'Completed', 'Cancelled', 'Done'],
       default: 'Pending',
     },
   
@@ -46,17 +46,21 @@ const taskSchema = new mongoose.Schema(
           required: true,
         },
         user: {
-          type: mongoose.Schema.Types.ObjectId,
+          type: Schema.Types.ObjectId,
           ref: 'User',
           required: true,
         },
         remarks: String,
       },
     ],
+    rescheduleRequested: {
+      type: Boolean,
+      default: false
+    },
   },
   {
     timestamps: true,
   }
 );
 
-module.exports = mongoose.model('Task', taskSchema);
+export default model('Task', taskSchema);

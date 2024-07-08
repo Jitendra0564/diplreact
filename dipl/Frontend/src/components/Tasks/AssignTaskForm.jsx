@@ -44,7 +44,7 @@ const AssignTaskForm = ({ onBack }) => {
 
     const onSubmit = async (values, { resetForm, setSubmitting }) => {
         try {
-            const response = await axios.post(`${baseURL}/tasks/`, values);
+            const response = await axios.post(`${baseURL}/tasks`, values);
             //console.log('Task created successfully:', response.data);
             alert('Task assigned successfully!');
             resetForm();
@@ -53,7 +53,7 @@ const AssignTaskForm = ({ onBack }) => {
                 setShowSuccessAlert(false);
                 navigate('/task'); // Navigate back to task table
                 onBack(); // Call onBack callback
-            }, 3000); // Hide the alert after 3 seconds
+            }, 2000); // Hide the alert after 3 seconds
         } catch (error) {
             console.error('Error creating task:', error);
             alert('An error occurred while assigning the task.');
@@ -113,7 +113,7 @@ const AssignTaskForm = ({ onBack }) => {
 
                         {/* End Date */}
                         <div className="mb-4">
-                            <label htmlFor="dueDate" className="block text-sm font-medium text-white">End Date</label>
+                            <label htmlFor="DueDate" className="block text-sm font-medium text-white">End Date</label>
                             <Field
                                 type="date"
                                 id="DueDate"
