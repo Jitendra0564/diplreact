@@ -1,11 +1,11 @@
 version: 1
 services:
   - type: web
-    name: my-react-app
+    name: diplreact-Frontend
     env: static
     buildCommand: npm install && npm run build
     staticPublishPath: dist
       routes:
       - type: rewrite
         source: /*
-        destination: /
+        destination: /index.html
