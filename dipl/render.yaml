@@ -4,7 +4,7 @@ services:
     name: diplreact-Frontend
     env: static
     buildCommand: npm install && npm run build
-    staticPublishPath: dist
+    staticPublishPath: dipl
     routes:
       - type: rewrite
         source: /*
