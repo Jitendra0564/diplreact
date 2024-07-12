@@ -14,11 +14,12 @@ const TodoList = () => {
                 <TaskTable />
             </div>
             <div>
-                <ProjectTable />
-            </div>
-            <div>
                 <MeetingsTable />
             </div>
+            <div>
+                <ProjectTable />
+            </div>
+            
 
 
         </>

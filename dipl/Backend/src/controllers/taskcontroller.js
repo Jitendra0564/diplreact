@@ -59,7 +59,6 @@ export async function getTaskById(req, res) {
   }
 }
 
-
 // Get all tasks
 export async function getAllTasks(req, res) {
   try {
@@ -100,7 +99,6 @@ export async function getAllTasks(req, res) {
   }
 }
 
-
 // Update a task
 export async function updateTask(req, res) {
   try {
@@ -136,6 +134,12 @@ export async function updateTask(req, res) {
       return res.status(403).json({ msg: 'Access denied. You do not have permission to update this task.', color: 'red' });
     }
 
+    // Check if the task is overdue
+    const currentDate = new Date();
+    if (new Date(task.DueDate) < currentDate && task.status !== 'Done' && 'Completed') {
+      updatedFields.status = 'Cancelled';
+    }
+
     // Update the task
     const updatedTask = await Task.findByIdAndUpdate(
       taskId,
@@ -150,7 +154,6 @@ export async function updateTask(req, res) {
     res.status(500).send('Server error');
   }
 }
-
 
 // Schedule a task
 export async function scheduleTask(req, res) {
@@ -216,7 +219,6 @@ export const rescheduleTask = async (req, res) => {
   }
 };
 
-
 // Get task history
 export async function getTaskHistory(req, res) {
   try {
@@ -267,20 +269,20 @@ export async function deleteTask(req, res) {
 
 export async function getNotifications(req, res) {
   try {
-    //console.log("in Notification");
-    const notifications = await Notification.find({ recipient: req.user._id });
+    const notifications = await Notification.find({ recipient: req.user.id });
     res.json(notifications);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching notifications', error: error.message });
   }
 };
 
+
 //Request-Reschedule
 export const RequestReschedule = async (req, res) => {
   try {
-    console.log("in Request",req.params);
+    //console.log("in Request",req.params);
     const task = await Task.findById(req.params.taskId);
-    console.log(task);
+    //console.log(task);
     if (!task) {
       return res.status(404).json({ message: 'Task not found' });
     }
@@ -293,7 +295,7 @@ export const RequestReschedule = async (req, res) => {
       type: 'reschedule_request',
       message: `Reschedule requested for task: ${task.title}`,
       task: task._id,
-      recipient: task.createdBy.toString()  // Set the recipient to the task creator
+      recipient: task.createdBy  // Set the recipient to the task creator
     });
     await notification.save();
 
@@ -305,9 +307,9 @@ export const RequestReschedule = async (req, res) => {
 
 export const RejectRequest = async (req, res) => {
   try {
-    console.log("in reject", req.params);
+    //console.log("in reject", req.params);
     const task = await Task.findById(req.params.taskId);
-    console.log("Task response",task);
+    //console.log("Task response",task);
     if (!task) {
       return res.status(404).json({ message: 'Task not found' });
     }

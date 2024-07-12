@@ -14,7 +14,7 @@ export function authenticateToken(req, res, next) {
   try {
     const decoded = verify(token, process.env.JWT_SECRET);
     req.user = decoded.user;
-    //console.log("for NExt");
+    //console.log("for NExt",req.user);
     next();
   } catch (err) {
     return res.status(403).json({ msg: 'Invalid token' });

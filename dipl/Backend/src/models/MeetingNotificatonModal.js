@@ -4,20 +4,16 @@ import { Schema, model } from 'mongoose';
 const NotificationSchema = new Schema({
   type: {
     type: String,
-    enum: ['reschedule_request', 'task_update', 'other'],
+    enum: ['Meeting_Reminder', 'other'],
     required: true
   },
   message: {
     type: String,
     required: true
   },
-  task: {
-    type: Schema.Types.ObjectId,
-    ref: 'Task'
-  },
    recipient: {
     type: Schema.Types.ObjectId,
-    ref: 'Task',
+    ref: 'Meeting',
     required: true
   },
   createdAt: {
@@ -30,4 +26,4 @@ const NotificationSchema = new Schema({
   }
 });
 
-export default model('Notification', NotificationSchema);
+export default model('MeetingNotification', NotificationSchema);

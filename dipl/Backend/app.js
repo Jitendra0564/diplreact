@@ -23,6 +23,7 @@ app.use(cors({
 import userRoutes from './src/routes/usersroutes.js';
 import taskRoutes from './src/routes/taskroutes.js';
 import companyRoutes from './src/routes/companiesroutes.js';
+import meetingRoutes from './src/routes/meetingroutes.js';
 
 // Public routes
 app.use('/api/users', userRoutes);
@@ -37,6 +38,7 @@ app.use(
 // Protected routes
 app.use('/api/tasks', authenticateToken, taskRoutes);
 app.use('/api/companies', authenticateToken, companyRoutes);
+app.use('/api/meetings',authenticateToken, meetingRoutes);
 
 app.use('/api/users',authenticateToken, userRoutes);
 

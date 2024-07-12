@@ -10,6 +10,7 @@ import UserPanel from './pages/Userpanel';
 import Task from './pages/Task';
 import Users from './pages/Users';
 import Tools from './pages/Tools';
+import Meeting from './components/Tool/Meetings/MeetingsSystem';
 import UsersProfile from './components/Users/UsersProfile';
 import Todo from './pages/Todo';
 import CompaniesProfile from './components/Companies/CompaniesProfile';
@@ -29,6 +30,7 @@ function App() {
           <Route path="/user" element={<Users />} />
           <Route path="/tools" element={<Tools />} />
           <Route path="/todo" element={<Todo />} />
+          <Route path="/meeting" element={<Meeting />} />
           <Route path="/userprofile/:userId" element={<UsersProfile />} />
           <Route path="/companyprofile/:CompanyId" element={<CompaniesProfile />} />
         </Routes>

@@ -10,6 +10,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import { motion } from "framer-motion";
 import {
+  Badge,
   Button,
   Dialog,
   DialogTitle,
@@ -195,7 +196,7 @@ const TaskTable = () => {
   
   const handleRejectReschedule = async (notification) => {
     try {
-      console.log("In Reject Notification",notification);
+      //console.log("In Reject Notification",notification);
       await axios.post(`${baseURL}/tasks/${notification.task}/reject-reschedule`);
       
       fetchNotifications(); // Refresh notifications
@@ -653,10 +654,10 @@ const TaskTable = () => {
           backgroundColor = "#6CB78A";
           break;
         case "Cancelled":
-          backgroundColor = "#E09FAA";
+          backgroundColor = "#ffe6cc";
           break;
           case "Done":
-            backgroundColor = "#4b8060";
+            backgroundColor = "#6ea985";
             break;
         default:
           backgroundColor = "";
@@ -715,7 +716,7 @@ const TaskTable = () => {
               color="primary"
               onClick={() => handleFilterTasks("today")}
             >
-              Filter Today
+              Today's Task
             </Button>
           </motion.div>
           <motion.div
@@ -732,7 +733,7 @@ const TaskTable = () => {
               color="primary"
               onClick={() => handleFilterTasks("tomorrow")}
             >
-              Filter Tomorrow
+              Tomorrow's Task
             </Button>
           </motion.div>
 
@@ -741,14 +742,26 @@ const TaskTable = () => {
             whileTap={{ scale: 0.95 }}
             transition={{ type: "spring", stiffness: 300, damping: 10 }}
           >
-            <Button
-              variant="outlined"
+           
+           <Badge
+              badgeContent={notifications.length}
               color="primary"
-              startIcon={<MdNotifications />}
-              onClick={handleOpenNotificationDialog}
+              sx={{
+                "& .MuiBadge-badge": {
+                  backgroundColor: "#1976d2", // Material-UI's default blue color
+                  color: "white",
+                },
+              }}
             >
-              Notifications
-            </Button>
+              <MdNotifications
+                onClick={handleOpenNotificationDialog}
+                style={{
+                  fontSize: "24px",
+                  cursor: "pointer",
+                  color: "#1976d2", // Material-UI's default blue color
+                }}
+              />
+            </Badge>
           </motion.div>
         </Box>
       </Box>
@@ -1061,7 +1074,7 @@ const TaskTable = () => {
             <ul>
               {notifications.map((notification, index) => (
                 <li key={index}>
-                  <Typography variant="body2">
+                  <Typography variant="body2" color="blue" >
                     {notification.type === "reschedule_request"
                       ? "Task Reschedule Request"
                       : "Notification"}
@@ -1093,7 +1106,7 @@ const TaskTable = () => {
       {/* Snackbar for showing deletion or scheduling message */}
       <Snackbar
         open={snackbarOpen}
-        autoHideDuration={6000}
+        autoHideDuration={3000}
         onClose={() => setSnackbarOpen(false)}
         message={snackbarMessage}
         ContentProps={{

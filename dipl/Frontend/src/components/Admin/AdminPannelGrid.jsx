@@ -22,6 +22,7 @@ const AdminPannelGrid = () => {
   const [InProgressTasks, setInProgress] = useState([]);
   const [totalEmployees, setTotalEmployees] = useState([]);
   const [totalCompanies, setTotalCompanies] = useState([]);
+  const [totalMeetings, setTotalMeetings] = useState([]);
   const [visibleTaskList, setVisibleTaskList] = useState(null);
   const [completionRate, setCompletionRate] = useState(0);
   const baseURL = import.meta.env.VITE_API_BASE_URL;
@@ -40,7 +41,7 @@ const AdminPannelGrid = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [tasksResponse, employeesResponse, companiesResponse] =
+        const [tasksResponse, employeesResponse, companiesResponse, meetingsResponse] =
           await Promise.all([
             axios.get(`${baseURL}/tasks`, {
               headers: { Authorization: `Bearer ${token}` },
@@ -49,6 +50,9 @@ const AdminPannelGrid = () => {
               headers: { Authorization: `Bearer ${token}` },
             }),
             axios.get(`${baseURL}/companies`, {
+              headers: { Authorization: `Bearer ${token}` },
+            }),
+            axios.get(`${baseURL}/meetings`, {
               headers: { Authorization: `Bearer ${token}` },
             }),
           ]);
@@ -69,10 +73,9 @@ const AdminPannelGrid = () => {
               currentUser !== task.assignedTo.name
           )
         );
-        const allemployees = employeesResponse.data;
-        setTotalEmployees(allemployees);
-        const allcompanies = companiesResponse.data;
-        setTotalCompanies(allcompanies);
+        setTotalEmployees(employeesResponse.data);
+        setTotalCompanies( companiesResponse.data);
+        setTotalMeetings(meetingsResponse.data);
       } catch (error) {
         console.error("Error fetching tasks:", error);
       }
@@ -85,41 +88,72 @@ const AdminPannelGrid = () => {
     setCompletionRate((completedTasks.length / totalTasks.length) * 100);
   }, [completedTasks, totalTasks]);
 
-  const renderTaskTitles = (tasks = [], users = [], companies = []) => {
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  // Assuming `totalMeetings` is an array of meeting objects with a `meetingDate` property
+  const upcomingMeetings = totalMeetings.filter(meeting => new Date(meeting.meetingDate) > new Date());
+
+
+  const renderTaskTitles = () => {
+    let data = [];
+    switch (visibleTaskList) {
+      case "total":
+        data = totalTasks;
+        break;
+      case "Pending":
+        data = pendingTasks;
+        break;
+      case "Cancelled":
+        data = expiredTasks;
+        break;
+      case "In Progress":
+        data = InProgressTasks;
+        break;
+      case "Completed":
+        data = completedTasks;
+        break;
+      case "TaskAssignBy":
+        data = TaskAssign;
+        break;
+      case "Employees":
+        data = totalEmployees;
+        break;
+      case "Companies":
+        data = totalCompanies;
+        break;
+      case "Meetings":
+        data = totalMeetings;
+        break;
+      case "UpcomingMeetings":
+        data = upcomingMeetings;
+        break;
+      default:
+        data = [];
+    }
     return (
       <>
-        {tasks &&
-          tasks.map((task, index) => (
-            <div key={task._id} className="mb-2">
-              <Typography variant="body1">{`${index + 1}. ${
-                task.title
-              }`}</Typography>
-              <Typography
-                variant="body2"
-                style={{ fontWeight: "bold", color: "black" }}
-              >
-                {task.description}
+        {data.map((item, index) => (
+          <div key={item._id} className="mb-2">
+            <Typography variant="body1">{`${index + 1}. ${item.title || item.name || item.meetingName}`}</Typography>
+            {item.description && (
+              <Typography variant="body2" style={{ fontWeight: "bold", color: "black" }}>
+                {item.description}
               </Typography>
-            </div>
-          ))}
-        {users &&
-          users.map((user, index) => (
-            <div key={user._id} className="mb-2">
-              <Typography variant="body1">{`${index + 1}. ${
-                user.name
-              }`}</Typography>
-              <Typography variant="body2">{user.email}</Typography>
-            </div>
-          ))}
-        {companies &&
-          companies.map((company, index) => (
-            <div key={company._id} className="mb-2">
-              <Typography
-                variant="body1"
-                style={{ fontWeight: "bold", color: "blue" }}
-              >{`${index + 1}. ${company.name}`}</Typography>
-            </div>
-          ))}
+            )}
+            {item.email && (
+              <Typography variant="body2">{item.email}</Typography>
+            )}
+            {item.meetingDate && (
+              <Typography variant="body2">{formatDate(item.meetingDate)}</Typography>
+            )}
+          </div>
+        ))}
       </>
     );
   };
@@ -172,7 +206,7 @@ const AdminPannelGrid = () => {
                         </h4>
                       </div>
                       <button
-                        className="w-full text-sky-600 bg-sky-100 hover:bg-sky-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
+                        className="w-full text-sky-600 bg-sky-200 hover:bg-sky-300 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
                         onClick={() => toggleTaskList("total")}
                       >
                         View List
@@ -241,7 +275,7 @@ const AdminPannelGrid = () => {
                         </h4>
                       </div>
                       <button
-                        className="w-full text-red-600 bg-red-100 hover:bg-red-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
+                        className="w-full text-purple-600 bg-purple-200 hover:bg-purple-300 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
                         onClick={() => toggleTaskList("Pending")}
                       >
                         View List
@@ -274,8 +308,16 @@ const AdminPannelGrid = () => {
                       </div>
 
                       <h1 className=" text-gray-900 font-bold text-8xl text-center ">
-                        8<span className="text-sm font-bold">-Only</span>
+                        
+                          {upcomingMeetings.length}
+                      
                       </h1>
+                      <button
+                        className="w-full text-lime-600 bg-lime-300 hover:bg-lime-400 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
+                        onClick={() => toggleTaskList("UpcomingMeetings")}
+                      >
+                        View List
+                      </button>
                     </div>
                   </a>
                 </motion.div>
@@ -309,8 +351,16 @@ const AdminPannelGrid = () => {
                           </div>
                         </div>
 
-                        <h4 className=" text-gray-500 font-bold text-xl">10</h4>
+                        <h4 className=" text-gray-500 font-bold text-xl">
+                          {totalMeetings.length}
+                        </h4>
                       </div>
+                      <button
+                        className="w-full text-sky-600 bg-sky-200 hover:bg-sky-300 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
+                        onClick={() => toggleTaskList("Meetings")}
+                      >
+                        View List
+                      </button>
                     </div>
                   </a>
                 </motion.div>
@@ -384,7 +434,7 @@ const AdminPannelGrid = () => {
                           <span className="text-sm font-bold">-Only</span>
                         </h1>
                         <button
-                          className="w-full text-sky-600 bg-sky-100 hover:bg-sky-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
+                          className="w-full text-sky-600 bg-sky-200 hover:bg-sky-300 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
                           onClick={() => toggleTaskList("Employees")}
                         >
                           View List
@@ -412,7 +462,7 @@ const AdminPannelGrid = () => {
                           />
                           <div className="p-3">
                             <h3 className="text-lg font-semibold text-black">
-                               In Progress Tasks
+                              In Progress Tasks
                             </h3>
                             <p className="text-gray-500 text-md"> Employee</p>
                           </div>
@@ -422,7 +472,7 @@ const AdminPannelGrid = () => {
                         </h4>
                       </div>
                       <button
-                        className="w-full text-yellow-600 bg-yellow-100 hover:bg-yellow-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
+                        className="w-full text-yellow-600 bg-yellow-200 hover:bg-yellow-300 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
                         onClick={() => toggleTaskList("In Progress")}
                       >
                         View List
@@ -433,75 +483,6 @@ const AdminPannelGrid = () => {
               </li>
             </ul>
             <ul className=" space-y-8 sm:block">
-            <li className="text-sm leading-6">
-              <motion.div
-                className="relative group"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ type: "spring", stiffness: 300, damping: 10 }}
-              >
-                <a href="#" className="cursor-pointer">
-                  <div className="relative p-6 space-y-6 leading-none rounded-lg shadow-lg bg-white hover:bg-gray-100 ring-1 ring-gray-900/5">
-                    <div className="flex items-center space-x-4">
-                      <img
-                        src={rtcomplition}
-                        className="w-15 h-12 bg-center bg-cover"
-                        alt="Score"
-                      />
-                      <div>
-                        <h3 className="text-lg font-semibold text-black">
-                          Rate Of Task Completion
-                        </h3>
-                        <p className="text-gray-500 text-md">Completion Rate</p>
-                      </div>
-                    </div>
-                    <h1 className=" text-gray-900 font-bold text-8xl text-center ">
-                      {Math.round(completionRate)}
-                      <span className="text-sm font-bold">%</span>
-                    </h1>
-                  </div>
-                </a>
-              </motion.div>
-            </li>
-            <li className="text-sm leading-6">
-              <motion.div
-                className="relative group"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ type: "spring", stiffness: 300, damping: 10 }}
-              >
-                <a href="#" className="cursor-pointer">
-                  <div className="relative p-6 space-y-6 leading-none rounded-lg shadow-lg bg-white  hover:bg-gray-100 ring-1 ring-gray-900/5">
-                    <div className="flex items-center justify-between space-x-9">
-                      <div className="flex items-center">
-                        <img
-                          src={completedtask}
-                          className="w-12 h-10 bg-center bg-cover"
-                          alt="Tasks"
-                        />
-                        <div className="p-3">
-                          <h3 className="text-lg font-semibold text-black">
-                           Completed Tasks
-                          </h3>
-                          <p className="text-gray-500 text-md"> Employee</p>
-                        </div>
-                      </div>
-                      <h4 className=" text-gray-500 font-bold text-xl">
-                        {completedTasks.length}
-                      </h4>
-                    </div>
-                    <button
-                      className="w-full text-green-600 bg-green-200 hover:bg-green-300 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
-                      onClick={() => toggleTaskList("Completed")}
-                    >
-                      View List
-                    </button>
-                  </div>
-                </a>
-              </motion.div>
-            </li>
-
-            {isAdmin && (
               <li className="text-sm leading-6">
                 <motion.div
                   className="relative group"
@@ -513,24 +494,57 @@ const AdminPannelGrid = () => {
                     <div className="relative p-6 space-y-6 leading-none rounded-lg shadow-lg bg-white hover:bg-gray-100 ring-1 ring-gray-900/5">
                       <div className="flex items-center space-x-4">
                         <img
-                          src={temployees}
+                          src={rtcomplition}
                           className="w-15 h-12 bg-center bg-cover"
                           alt="Score"
                         />
                         <div>
                           <h3 className="text-lg font-semibold text-black">
-                            Total Companies
+                            Rate Of Task Completion
                           </h3>
-                          <p className="text-gray-500 text-md">Companies</p>
+                          <p className="text-gray-500 text-md">
+                            Completion Rate
+                          </p>
                         </div>
                       </div>
-                      <h1 className="text-gray-900 font-bold text-8xl text-center">
-                        {totalCompanies.length}
-                        <span className="text-sm font-bold">-Only</span>
+                      <h1 className=" text-gray-900 font-bold text-8xl text-center ">
+                        {Math.round(completionRate)}
+                        <span className="text-sm font-bold">%</span>
                       </h1>
+                    </div>
+                  </a>
+                </motion.div>
+              </li>
+              <li className="text-sm leading-6">
+                <motion.div
+                  className="relative group"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 10 }}
+                >
+                  <a href="#" className="cursor-pointer">
+                    <div className="relative p-6 space-y-6 leading-none rounded-lg shadow-lg bg-white  hover:bg-gray-100 ring-1 ring-gray-900/5">
+                      <div className="flex items-center justify-between space-x-9">
+                        <div className="flex items-center">
+                          <img
+                            src={completedtask}
+                            className="w-12 h-10 bg-center bg-cover"
+                            alt="Tasks"
+                          />
+                          <div className="p-3">
+                            <h3 className="text-lg font-semibold text-black">
+                              Completed Tasks
+                            </h3>
+                            <p className="text-gray-500 text-md"> Employee</p>
+                          </div>
+                        </div>
+                        <h4 className=" text-gray-500 font-bold text-xl">
+                          {completedTasks.length}
+                        </h4>
+                      </div>
                       <button
-                        className="w-full text-sky-600 bg-sky-100 hover:bg-sky-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
-                        onClick={() => toggleTaskList("Companies")}
+                        className="w-full text-green-600 bg-green-300 hover:bg-green-400 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
+                        onClick={() => toggleTaskList("Completed")}
                       >
                         View List
                       </button>
@@ -538,48 +552,84 @@ const AdminPannelGrid = () => {
                   </a>
                 </motion.div>
               </li>
-            )}
-            <li className="text-sm leading-6">
-            <motion.div
+
+              {isAdmin && (
+                <li className="text-sm leading-6">
+                  <motion.div
+                    className="relative group"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 10 }}
+                  >
+                    <a href="#" className="cursor-pointer">
+                      <div className="relative p-6 space-y-6 leading-none rounded-lg shadow-lg bg-white hover:bg-gray-100 ring-1 ring-gray-900/5">
+                        <div className="flex items-center space-x-4">
+                          <img
+                            src={temployees}
+                            className="w-15 h-12 bg-center bg-cover"
+                            alt="Score"
+                          />
+                          <div>
+                            <h3 className="text-lg font-semibold text-black">
+                              Total Companies
+                            </h3>
+                            <p className="text-gray-500 text-md">Companies</p>
+                          </div>
+                        </div>
+                        <h1 className="text-gray-900 font-bold text-8xl text-center">
+                          {totalCompanies.length}
+                          <span className="text-sm font-bold">-Only</span>
+                        </h1>
+                        <button
+                          className="w-full text-sky-600 bg-sky-200 hover:bg-sky-300 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
+                          onClick={() => toggleTaskList("Companies")}
+                        >
+                          View List
+                        </button>
+                      </div>
+                    </a>
+                  </motion.div>
+                </li>
+              )}
+              <li className="text-sm leading-6">
+                <motion.div
                   className="relative group"
-                  whileHover={{ scale: 1.05}}
+                  whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 300, damping: 10 }}
                 >
-                <a href="#" className="cursor-pointer">
-                  <div className="relative p-6 space-y-6 leading-none rounded-lg shadow-lg bg-white hover:bg-gray-100 ring-1  ring-gray-900/5">
-                    <div className="flex items-center justify-between space-x-9">
-                      <div className="flex items-center">
-                        <img
-                          src={ptasks}
-                          className="w-12 h-10 bg-center bg-cover "
-                          alt="Tasks"
-                        />
-                        <div className="p-3">
-                          <h3 className="text-lg font-semibold text-black">
-                            Tasks Assign By You
-                          </h3>
-                          <p className="text-gray-500 text-md"> Employee</p>
+                  <a href="#" className="cursor-pointer">
+                    <div className="relative p-6 space-y-6 leading-none rounded-lg shadow-lg bg-white hover:bg-gray-100 ring-1  ring-gray-900/5">
+                      <div className="flex items-center justify-between space-x-9">
+                        <div className="flex items-center">
+                          <img
+                            src={ptasks}
+                            className="w-12 h-10 bg-center bg-cover "
+                            alt="Tasks"
+                          />
+                          <div className="p-3">
+                            <h3 className="text-lg font-semibold text-black">
+                              Tasks Assign By You
+                            </h3>
+                            <p className="text-gray-500 text-md"> Employee</p>
+                          </div>
                         </div>
+
+                        <h4 className=" text-gray-500 font-bold text-xl">
+                          {TaskAssign.length}
+                        </h4>
                       </div>
-
-                      <h4 className=" text-gray-500 font-bold text-xl">
-
-                        {TaskAssign.length}
-                      </h4>
-                    </div>
-                    <button
-                        className="w-full text-red-600 bg-orange-100 hover:bg-orange-200 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
+                      <button
+                        className="w-full text-fuchsia-600 bg-fuchsia-300 hover:bg-fuchsia-400 text-sm py-2 px-4 rounded-md transition duration-300 ease-in-out"
                         onClick={() => toggleTaskList("TaskAssignBy")}
                       >
                         View List
                       </button>
-                  </div>
-                </a>
-              </motion.div>
-            </li>
+                    </div>
+                  </a>
+                </motion.div>
+              </li>
             </ul>
-           
           </div>
         </div>
       </section>
@@ -597,7 +647,7 @@ const AdminPannelGrid = () => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: { xs: "90%", sm: "auto" , md: "auto", lg: "auto"},
+            width: { xs: "90%", sm: "auto", md: "auto", lg: "auto" },
             minWidth: "300px", // Ensures a minimum width
             bgcolor: "background.paper",
             border: "2px solid #000",
@@ -624,6 +674,10 @@ const AdminPannelGrid = () => {
               ? "Total Employees"
               : visibleTaskList === "Companies"
               ? "Total Companies"
+              : visibleTaskList === "Meetings"
+              ? "Total Meetings"
+               : visibleTaskList === "UpcomingMeetings"
+              ? "Upcoming Meetings"
               : ""}
           </Typography>
           <div id="task-list-modal-description">
@@ -643,6 +697,10 @@ const AdminPannelGrid = () => {
               renderTaskTitles([], totalEmployees, [])}
             {visibleTaskList === "Companies" &&
               renderTaskTitles([], [], totalCompanies)}
+            {visibleTaskList === "Meetings" &&
+              renderTaskTitles([], [], totalMeetings)}
+            {visibleTaskList === "UpcomingMeetings" &&
+              renderTaskTitles([], [], upcomingMeetings)}
           </div>
           <Button
             onClick={closeModal}
