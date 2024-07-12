@@ -13,7 +13,7 @@ const app = express();
 app.use(json());
 // CORS configuration
 app.use(cors({
-  origin: 'http://localhost:5173', // Allow requests from this origin
+   origin: ['https://diplreact-frontend.onrender.com', 'http://localhost:5173'], // Allow requests from this origin
   credentials: true, // Allow credentials (cookies, authorization headers)
 }));
 

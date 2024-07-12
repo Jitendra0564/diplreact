@@ -1,0 +1,10 @@
+version: 1
+services:
+  - type: web
+    name: my-react-app
+    env: static
+    staticPublishPath: build
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /
