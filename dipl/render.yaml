@@ -5,7 +5,7 @@ services:
     env: static
     buildCommand: npm install && npm run build
     staticPublishPath: dist
-      routes:
+    routes:
       - type: rewrite
         source: /*
         destination: /index.html
