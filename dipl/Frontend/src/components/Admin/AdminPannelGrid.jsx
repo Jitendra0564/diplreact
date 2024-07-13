@@ -37,7 +37,7 @@ const AdminPannelGrid = () => {
   const isAdmin = getCookieValue("isAdmin") === "true";
   const token = getCookieValue("token");
   const currentUser = getCookieValue("currentUser");
-
+  const currentDate = new Date();
   useEffect(() => {
     const fetchData = async () => {
       try {
