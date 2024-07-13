@@ -64,7 +64,7 @@ const AdminPannelGrid = () => {
         );
 
         setPendingTasks(allTasks.filter((task) => task.status === "Pending"));
-        setExpiredTasks(allTasks.filter((task) => task.status === "Cancelled"));
+         setExpiredTasks(allTasks.filter((task) => new Date(task.DueDate) < currentDate && task.status !== 'Completed' && task.status !== 'Done'));
         setInProgress(allTasks.filter((task) => task.status === "In Progress"));
         setTaskAssign(
           allTasks.filter(
