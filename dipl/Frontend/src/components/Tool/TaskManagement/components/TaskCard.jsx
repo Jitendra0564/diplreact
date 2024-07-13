@@ -35,7 +35,7 @@ const TaskCard = () => {
                 setTotalTasks(allTasks);
                 setCompletedTasks(allTasks.filter((task) => task.status === 'Completed'));
                 setPendingTasks(allTasks.filter((task) => task.status === 'Pending'));
-                setExpiredTasks(allTasks.filter((task) => new Date(task.DueDate) < currentDate && task.status !== 'Completed'));
+                 setExpiredTasks(allTasks.filter((task) => new Date(task.DueDate) < currentDate && task.status !== 'Completed' && task.status !== 'Done'));
                 setInProgress(allTasks.filter((task) => task.status === 'In Progress'));
                 setTaskAssign(
                     allTasks.filter(
