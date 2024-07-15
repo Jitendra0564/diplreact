@@ -33,16 +33,17 @@ const TaskCard = () => {
                 const allTasks = response.data;
                 const currentDate = new Date();
 
-                const updatetask = allTasks.map((task) => {
-                    if(new Date(task.DueDate) < currentDate && task.status !== 'Completed' && task.status !== 'Done'){
-                        task.status = 'Cancelled'
+                // Update expired tasks status to 'Cancelled'
+                  const updatedTasks = allTasks.map((task) => {
+                    if (new Date(task.DueDate) < currentDate && task.status !== 'Completed' && task.status !== 'Done') {
+                        task.status = 'Cancelled';
                     }
                     return task;
                 });
                 setTotalTasks(allTasks);
                 setCompletedTasks(allTasks.filter((task) => task.status === 'Completed'));
                 setPendingTasks(allTasks.filter((task) => task.status === 'Pending'));
-                 setExpiredTasks(updatetask.filter((task) => new Date(task.DueDate) < currentDate && task.status !== 'Completed' && task.status !== 'Done'));
+                setExpiredTasks(updatedTasks.filter((task) => new Date(task.DueDate) < currentDate && task.status !== 'Completed' && task.status !== 'Done'));
                 setInProgress(allTasks.filter((task) => task.status === 'In Progress'));
                 setTaskAssign(
                     allTasks.filter(
