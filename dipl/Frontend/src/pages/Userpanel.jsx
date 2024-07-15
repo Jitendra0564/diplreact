@@ -11,7 +11,7 @@ const Userpanel = () => {
                 <div className='relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden'>
 
                     <main>
-                        <p>here is user pannel</p>
+                        <p></p>
 
                         <AdminPannelGrid />
                     </main>
