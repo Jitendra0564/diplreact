@@ -38,6 +38,13 @@ const AdminPannelGrid = () => {
   const token = getCookieValue("token");
   const currentUser = getCookieValue("currentUser");
   const currentDate = new Date();
+   // Update expired tasks status to 'Cancelled'
+                  const updatedTasks = allTasks.map((task) => {
+                    if (new Date(task.DueDate) < currentDate && task.status !== 'Completed' && task.status !== 'Done') {
+                        task.status = 'Cancelled';
+                    }
+                    return task;
+                });
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -64,7 +71,7 @@ const AdminPannelGrid = () => {
         );
 
         setPendingTasks(allTasks.filter((task) => task.status === "Pending"));
-         setExpiredTasks(allTasks.filter((task) => new Date(task.DueDate) < currentDate && task.status !== 'Completed' && task.status !== 'Done'));
+        setExpiredTasks(updatedTasks.filter((task) => new Date(task.DueDate) < currentDate && task.status !== 'Completed' && task.status !== 'Done'));
         setInProgress(allTasks.filter((task) => task.status === "In Progress"));
         setTaskAssign(
           allTasks.filter(
