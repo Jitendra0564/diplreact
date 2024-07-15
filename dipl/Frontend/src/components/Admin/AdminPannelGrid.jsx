@@ -24,6 +24,21 @@ const AdminPannelGrid = () => {
   const [totalCompanies, setTotalCompanies] = useState([]);
   const [totalMeetings, setTotalMeetings] = useState([]);
   const [visibleTaskList, setVisibleTaskList] = useState(null);
+import umeetings from "../../assets/upcommingmettings.png";
+import meeting from "../../assets/meetings.png";
+import etask from "../../assets/etask.png";
+import temployees from "../../assets/temployees.png";
+import totalptask from "../../assets/totalptask.png";
+import completedtask from "../../assets/completedtask.png";
+import rtcomplition from "../../assets/rtcomplition.png";
+import { motion } from "framer-motion";
+
+const AdminPannelGrid = () => {
+  const [totalTasks, setTotalTasks] = useState([]);
+  const [completedTasks, setCompletedTasks] = useState([]);
+  const [pendingTasks, setPendingTasks] = useState([]);
+  const [expiredTasks, setExpiredTasks] = useState([]);
+  const [TaskAssign, setTaskAssign] = useState([]);
   const [completionRate, setCompletionRate] = useState(0);
   const baseURL = import.meta.env.VITE_API_BASE_URL;
 
@@ -38,13 +53,6 @@ const AdminPannelGrid = () => {
   const token = getCookieValue("token");
   const currentUser = getCookieValue("currentUser");
   const currentDate = new Date();
-   // Update expired tasks status to 'Cancelled'
-                  const updatedTasks = allTasks.map((task) => {
-                    if (new Date(task.DueDate) < currentDate && task.status !== 'Completed' && task.status !== 'Done') {
-                        task.status = 'Cancelled';
-                    }
-                    return task;
-                });
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -69,7 +77,13 @@ const AdminPannelGrid = () => {
         setCompletedTasks(
           allTasks.filter((task) => task.status === "Completed")
         );
-
+   // Update expired tasks status to 'Cancelled'
+                  const updatedTasks = allTasks.map((task) => {
+                    if (new Date(task.DueDate) < currentDate && task.status !== 'Completed' && task.status !== 'Done') {
+                        task.status = 'Cancelled';
+                    }
+                    return task;
+                });
         setPendingTasks(allTasks.filter((task) => task.status === "Pending"));
         setExpiredTasks(updatedTasks.filter((task) => new Date(task.DueDate) < currentDate && task.status !== 'Completed' && task.status !== 'Done'));
         setInProgress(allTasks.filter((task) => task.status === "In Progress"));
