@@ -24,7 +24,7 @@ const AdminPannelGrid = () => {
   const [totalCompanies, setTotalCompanies] = useState([]);
   const [totalMeetings, setTotalMeetings] = useState([]);
   const [visibleTaskList, setVisibleTaskList] = useState(null);
-
+  const [completionRate, setCompletionRate] = useState(0);
   const baseURL = import.meta.env.VITE_API_BASE_URL;
 
   // Function to get the value of a cookie by name
@@ -37,7 +37,7 @@ const AdminPannelGrid = () => {
   const isAdmin = getCookieValue("isAdmin") === "true";
   const token = getCookieValue("token");
   const currentUser = getCookieValue("currentUser");
-  const currentDate = new Date();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -58,17 +58,19 @@ const AdminPannelGrid = () => {
           ]);
 
         const allTasks = tasksResponse.data;
+        const currentDate = new Date();
+         // Update expired tasks status to 'Cancelled'
+         const updatedTasks = allTasks.map((task) => {
+          if (new Date(task.DueDate) < currentDate && task.status !== 'Completed' && task.status !== 'Done') {
+              task.status = 'Cancelled';
+          }
+          return task;
+      });
         setTotalTasks(allTasks);
         setCompletedTasks(
           allTasks.filter((task) => task.status === "Completed")
         );
-   // Update expired tasks status to 'Cancelled'
-                  const updatedTasks = allTasks.map((task) => {
-                    if (new Date(task.DueDate) < currentDate && task.status !== 'Completed' && task.status !== 'Done') {
-                        task.status = 'Cancelled';
-                    }
-                    return task;
-                });
+
         setPendingTasks(allTasks.filter((task) => task.status === "Pending"));
         setExpiredTasks(updatedTasks.filter((task) => new Date(task.DueDate) < currentDate && task.status !== 'Completed' && task.status !== 'Done'));
         setInProgress(allTasks.filter((task) => task.status === "In Progress"));
