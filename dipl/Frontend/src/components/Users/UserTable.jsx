@@ -2,9 +2,32 @@ import React, { useEffect, useState } from 'react';
 import MUIDataTable from "mui-datatables";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from 'axios';
+import {
+    MdOutlineAddTask,
+    MdMoreVert,
+    MdClose,
+    MdNotifications,
+  } from "react-icons/md";
 import { motion } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
-
+import {
+    Badge,
+    Button,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Popover,
+    MenuItem,
+    Typography,
+    TextField,
+    Snackbar,
+    IconButton,
+    Box,
+    useMediaQuery,
+    useTheme,
+  } from "@mui/material";
+  import AssignEmployee from './AddEmployeeForm';
 const getMuiTheme = () =>
     createTheme({
         typography: {},
@@ -41,6 +64,7 @@ const getMuiTheme = () =>
 
 const UserTable = () => {
     const [users, setUsers] = useState([]);
+    const [isEmployeeFormOpen, setEmployeeFormOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const baseURL = import.meta.env.VITE_API_BASE_URL;
@@ -99,27 +123,74 @@ const UserTable = () => {
         }
     };
 
+    const handleOpenTaskForm = () => {
+        setEmployeeFormOpen(true);
+      };
+    
+      const handleCloseTaskForm = () => {
+        setEmployeeFormOpen(false);
+      };
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
     const options = {
         selectableRows: 'none',
         elevation: 0,
         rowsPerPage: 5,
         rowsPerPageOptions: [5, 10, 20, 30],
+        customToolbar: () => (
+            <Box
+              display="center"
+              justifyContent={isSmallScreen ? "center" : "space-around"}
+              alignItems="center"
+              padding={isSmallScreen ? "8px" : "16px"}
+              flexDirection={isSmallScreen ? "column" : "row"}
+            >
+               <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 300, damping: 10 }}
+                style={{ marginBottom: isSmallScreen ? "8px" : "0" }}
+              >
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<MdOutlineAddTask />}
+                  onClick={handleOpenTaskForm}
+                >
+                  Add Employee
+                </Button>
+              </motion.div>
+            </Box>
+          ),
     };
 
     return (
-        <div className="">
-            <div className="mx-6 my-6 mt-6 mb-6">
-                <ThemeProvider theme={getMuiTheme()}>
-                    <MUIDataTable
-                        title={"Users List"}
-                        data={users}
-                        columns={columns}
-                        options={options}
-                    />
-                </ThemeProvider>
-                {loading && <p>Loading...</p>}
-            </div>
+      <div className="">
+        <div className="mx-6 my-6 mt-6 mb-6">
+          <ThemeProvider theme={getMuiTheme()}>
+            <MUIDataTable
+              title={"Users List"}
+              data={users}
+              columns={columns}
+              options={options}
+            />
+          </ThemeProvider>
+          {loading && <p>Loading...</p>}
+          {/* Employee Creation Form Dialog */}
+          <Dialog open={isEmployeeFormOpen} onClose={handleCloseTaskForm}>
+            <DialogTitle>Add Employee</DialogTitle>
+            <DialogContent>
+              <AssignEmployee onBack={handleCloseTaskForm} />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseTaskForm} color="primary">
+                Cancel
+              </Button>
+            </DialogActions>
+          </Dialog>
         </div>
+      </div>
     );
 };
 
