@@ -116,7 +116,7 @@ const TaskCard = () => {
                             </div>
                             <div>
                                 <div className="text-gray-600 text-sm">
-                                    {isAdmin ? 'Total Tasks' : 'Tasks Assigned to You'}
+                                    {isAdmin ? 'Total Tasks' : 'Total Tasks'}
                                 </div>
                                 <div className="text-gray-900 text-2xl font-semibold">
                                     {totalTasks.length}
