@@ -138,6 +138,7 @@ const UserTable = () => {
         elevation: 0,
         rowsPerPage: 5,
         rowsPerPageOptions: [5, 10, 20, 30],
+        responsive: "standard",
         customToolbar: () => (
             <Box
               display="center"
