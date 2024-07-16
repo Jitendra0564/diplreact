@@ -8,7 +8,7 @@ import { MdMarkEmailUnread } from "react-icons/md";
 import { BsCalendarDateFill } from "react-icons/bs";
 import { FaAddressBook } from "react-icons/fa";
 import { HiIdentification } from "react-icons/hi";
-import { FaPhone } from "react-icons/fa";
+import { FaSquarePhone } from "react-icons/fa6";
 import { MdCastForEducation } from "react-icons/md";
 import { MdWorkHistory } from "react-icons/md";
 import { BsFillCalendar2DateFill } from "react-icons/bs";
@@ -170,7 +170,7 @@ const UsersProfile = () => {
               </div>
               <div className="px-4 py-2">
                 <h4 className="text-gray-500 font-semibold flex items-center">
-                <FaPhone className="text-gray-900 mr-2" />Phone no.</h4>
+                <FaSquarePhone className="text-gray-900 mr-2" />Phone no.</h4>
                 <p className="text-gray-900 text-sm font-semibold pt-1">
                   {user.contactNo}
                 </p>
