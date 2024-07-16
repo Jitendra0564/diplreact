@@ -201,7 +201,7 @@ const AdminPannelGrid = () => {
                               {" "}
                               {isAdmin
                                 ? "Total Tasks"
-                                : "Tasks Assigned to You"}
+                                : "Total Tasks"}
                             </h3>
                             <p className="text-gray-500 text-md">
                               Admin &amp; Employee
