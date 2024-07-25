@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../pages/AuthContext";
-import Spinner from "../components/shared/spinner";
+import Spinner from "../components/spinner";
 
 // Function to get the value of a cookie by name
 const getCookieValue = (name) => {
